@@ -4,7 +4,15 @@
 #include "../firmware/app.h"
 #include "../dsp/engine.h"
 static void button(int n){fw_button(n,1);fw_button(n,0);}
+static void advance(int blocks){for(int i=0;i<blocks;i++)assert(fw_render(128));}
+static void check_reset(void){
+ fw_boot();assert(fw_rhythm_velocity()==80);button(5);fw_encoder(6,20);assert(fw_rhythm_velocity()==100);button(1);
+ fw_set_tone(13);fw_set_mode(26);fw_button(5,1);advance(1033);assert(!fw_factory_reset_menu());advance(2);assert(fw_factory_reset_menu());
+ fw_encoder(1,1);assert(fw_tone()==13);button(6);assert(!fw_factory_reset_menu());assert(fw_tone()==13);fw_button(5,0);
+ fw_button(5,1);advance(1035);assert(fw_factory_reset_menu());button(1);assert(!fw_factory_reset_menu());assert(fw_tone()==4);assert(fw_mode()==16);assert(fw_rhythm_velocity()==80);assert(fw_store()[0]==0x474d000bu);advance(1035);assert(!fw_factory_reset_menu());fw_button(5,0);
+}
 int main(int argc,char **argv){
+ check_reset();
  assert(argc==2);FILE *f=fopen(argv[1],"wb");assert(f);
  const int blacks[]={1,3,5,8,10,13,15,17,20,22,25};
  for(int mode=1;mode<=2;mode++){

@@ -19,8 +19,8 @@ for(let tone=0;tone<16;tone++){
     assert.ok(e.gm_active()<=14);
   }
   assert.equal(e.gm_active(),0);hashes.add(hash.digest('hex'));
-  e.fw_button(7,1);e.fw_button(7,0);const saved=new Uint32Array(e.memory.buffer,e.fw_store(),45).slice();assert.equal(saved[0],0x474d000a);
-  e.fw_boot();new Uint32Array(e.memory.buffer,e.fw_store(),45).set(saved);assert.equal(e.fw_restore(),1);assert.equal(e.fw_tone(),tone);
+  e.fw_button(7,1);e.fw_button(7,0);const saved=new Uint32Array(e.memory.buffer,e.fw_store(),46).slice();assert.equal(saved[0],0x474d000b);
+  e.fw_boot();new Uint32Array(e.memory.buffer,e.fw_store(),46).set(saved);assert.equal(e.fw_restore(),1);assert.equal(e.fw_tone(),tone);
 }
 assert.equal(hashes.size,16,'all patches generate distinct audio');assert.equal(sampleIndex*4,native.length);
 let contacts=0;
@@ -37,7 +37,7 @@ for(let tone=0;tone<16;tone++)for(let mode=0;mode<50;mode++){
 }
 // Bad v3 instruments and old snapshots containing new-only IDs are rejected.
 e.fw_boot();e.fw_set_tone(15);e.fw_button(7,1);e.fw_button(7,0);
-const settings=new Uint32Array(e.memory.buffer,e.fw_store(),45);settings[0]=0x474d0002;assert.equal(e.fw_restore(),0);settings[0]=0x474d0003;settings[2]=16;assert.equal(e.fw_restore(),0);
+const settings=new Uint32Array(e.memory.buffer,e.fw_store(),46);settings[0]=0x474d0002;assert.equal(e.fw_restore(),0);settings[0]=0x474d0003;settings[2]=16;assert.equal(e.fw_restore(),0);
 assert.equal(e.fw_key_pitch(-1),-1);assert.equal(e.fw_key_pitch(16),-1);
 assert.equal(e.fw_set_tone(-1),0);assert.equal(e.fw_set_tone(16),0);
 const report={instruments:16,distinct_audio:hashes.size,native_wasm_samples:sampleIndex,max_float_difference:0,style_instrument_contacts:contacts,peak,state_bytes:e.fw_state_bytes(),native_mixed_retriggers:20000,ubsan:'passed'};

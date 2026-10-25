@@ -36,7 +36,7 @@
   "max_float_difference": 0,
   "native_ubsan": "passed",
   "timing_gate_swing_release_stop_mode_changes": "passed",
-  "storage": "v10 45 words; legacy v1\u2013v9 defaults to Standard tuning; previous sweep/humanity migrations retained",
+  "storage": "v11 46 words; legacy v1\u2013v10 accepted; old snapshots default rhythm velocity to 80%",
   "lock": "ENV 3 seconds, colour ramp and once-per-hold tested",
   "physical_cpu_latency": "unmeasured",
   "division_tempo_timing_cases": 54,
@@ -52,5 +52,7 @@
   "free_tail_and_stop": "passed",
   "fx_toggle": "passed, playback preserved",
   "sweep": "INSTANT, then 5\u2013250 ms in 5 ms steps; factory 50 ms; 51 settings verified",
-  "gate_tails": "global On/Off, soft release for percentage gates; FREE unchanged; cancellation and persistence passed"
+  "gate_tails": "global On/Off, soft release for percentage gates; FREE unchanged; cancellation and persistence passed",
+  "rhythm_velocity": "80% default, GLO K4 1\u2013100%; manual zones + automatic attacks, finite bounds, Freeplay independence and persistence passed",
+  "factory_reset": "GLO 3-second prompt, SEL confirm, HOME cancel; all defaults, lock override, input blocking, held keys/buttons, fresh browser snapshot passed"
 }

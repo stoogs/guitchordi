@@ -227,3 +227,7 @@ The placeholder pre-renders random excitation in a startup worker and caches sam
 1. Stress the live upstream backend across touch devices/browsers and record end-to-end latency/dropouts; keep the JS reference selectable.
 2. Inspect pinned FM-1 SDK/hardware adapters, key/LED mapping and compiler resources, then build an unflashed firmware vertical slice around the shared core.
 3. Validate real FM-1 RAM/CPU/voice limits and control ergonomics before any user-authorized device installation. Resolve Git setup when the user has completed Xcode licensing.
+
+## Rhythm velocity and confirmed factory reset — 2026-10-25
+
+Strum/Arp normal keys and automatic notes now default to 80% attack. Soft/accent zones remain expressive; GLO K4 adjusts 1–100% separately from tone Intensity. Binary hardware input still cannot measure physical strike velocity. GLO held three seconds opens Reset everything?; SEL confirms, HOME cancels. Confirmation restores every saved instrument setting and chord slot, publishes a browser save, and requires held keys to release. Target package builds at 217424 bytes / 55916 main RAM bytes. Velocity/reset regressions, rhythm matrix and native/WASM parity passed. No device accessed.

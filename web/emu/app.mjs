@@ -79,7 +79,7 @@ knob('KNOB 1','50% = normal',3,$('performance-knobs'));
 knob('KNOB 2','transpose',4,$('performance-knobs'));
 knob('KNOB 3','shared room',5,$('performance-knobs'));
 knob('KNOB 4','chord voicing',6,$('performance-knobs'));
-const panels=[['FX',0,'tone / home'],['SEL',1,'OK / confirm'],['ENV',2,'hold to lock'],['LFO',3,'reserved'],['EDIT',4,'tap assign / hold reset'],['GLO',5,'global settings'],['HOME',6,'play page'],['SAVE',7,'browser save'],['ARP',8,'play mode'],['SEQ',9,'reserved'],['PLAY',10,'damp / stop'],['REC',11,'reserved'],['OCT−',12,'transpose'],['OCT+',13,'transpose']];
+const panels=[['FX',0,'tone / home'],['SEL',1,'OK / confirm'],['ENV',2,'hold to lock'],['LFO',3,'reserved'],['EDIT',4,'tap assign / hold reset'],['GLO',5,'settings / hold reset'],['HOME',6,'play page'],['SAVE',7,'browser save'],['ARP',8,'play mode'],['SEQ',9,'reserved'],['PLAY',10,'damp / stop'],['REC',11,'reserved'],['OCT−',12,'transpose'],['OCT+',13,'transpose']];
 for(const [label,button,description] of panels){
   const b=document.createElement('button');b.type='button';b.className='panel-button';b.innerHTML=`${label}<small>${description}</small>`;b.setAttribute('aria-label',`${label}: ${description}`);
   b.disabled=[3,9,11].includes(button);
@@ -123,28 +123,30 @@ function publish(data){
   setText('guide-preset-help',data.resetMenu?'Turn PRESETS · tap SEL to confirm':data.editing?'EDIT is on · PRESETS reassigns the selected slot':'PRESETS chooses the chord style · 50 banks');
   const globals=data.page===3;
   if(globals){
-    const globalNames=['Gate tails','Strum humanity','Tuning','Unused'];
-    const globalValues=[data.gateTails?'ON':'OFF',`${data.humanity}%`,data.tuningName,'—'];
+    const globalNames=['Gate tails','Strum humanity','Tuning','Rhythm velocity'];
+    const globalValues=[data.gateTails?'ON':'OFF',`${data.humanity}%`,data.tuningName,`${data.rhythmVelocity}%`];
     for(let i=0;i<4;i++){values[i+3]=globalValues[i];names[i+3]=`KNOB ${i+1} · ${globalNames[i]}`;}
   }
   const freeLabels=['Intensity','Transpose','Shared room','Chord voicing'];
   for(let i=0;i<4;i++){
     setText(`guide-knob${i+1}`,values[i+3]);
-    document.querySelector(`[data-control="${i+3}"]>span`).textContent=`Knob ${i+1} · ${globals?['Gate tails','Strum humanity','Tuning','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i]}`;
-    knobs.find(k=>k.role===i+3).dial.parentElement.querySelector('small').textContent=globals?['Gate tails','Strum humanity','Tuning','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i];
+    document.querySelector(`[data-control="${i+3}"]>span`).textContent=`Knob ${i+1} · ${globals?['Gate tails','Strum humanity','Tuning','Rhythm velocity'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i]}`;
+    knobs.find(k=>k.role===i+3).dial.parentElement.querySelector('small').textContent=globals?['Gate tails','Strum humanity','Tuning','Rhythm velocity'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i];
   }
   $('select-help').textContent='Turn SELECT for 40–240 BPM · ARP cycles Freeplay / Strum / Arp';
   $('chord-hint').textContent=data.locked?'ENV lock holds the current chord · unlock to follow suggestions.':'Next chord: green / bright = smooth or strong · amber / medium = colour · red / dim = adventurous. Suggestions, not rules.';
-  $('performance-hint').textContent=globals?'Global settings · K1: percentage-gate tails On/Off · K2: strum humanity · K3: tuning · SEL / GLO / HOME returns to play.':data.performance?`${performanceNames[data.performance]} · ${data.bpm} BPM · ${data.running?'Playing':'Hold a black chord key to play'} · SELECT sets BPM; ARP cycles modes; FX toggles tone / Home; GLO sets gate tails and humanity.`:'Freeplay · direct key attacks. Press ARP for Strum or Arp. SELECT sets BPM.';
+  $('performance-hint').textContent=globals?'Global settings · K1: percentage-gate tails On/Off · K2: strum humanity · K3: tuning · K4: strum/arp velocity · Hold GLO 3 seconds: reset confirmation · SEL / GLO / HOME returns to play.':data.performance?`${performanceNames[data.performance]} · ${data.bpm} BPM · ${data.running?'Playing':'Hold a black chord key to play'} · SELECT sets BPM; ARP cycles modes; FX toggles tone / Home; GLO sets gate tails and humanity.`:'Freeplay · direct key attacks. Press ARP for Strum or Arp. SELECT sets BPM.';
   document.querySelectorAll('[data-control]').forEach(card=>card.classList.toggle('active',Number(card.dataset.control)===data.control));
   setText('control-feedback',data.control>=0?`${names[data.control]}: ${data.locked&&(data.control===2 || (globals&&data.control===5) || (!rhythmActive&&!globals&&data.control===6))?'Chord locked':values[data.control]}`:'Turn a knob to see its function and value here.');
   $('control-feedback').classList.toggle('active',data.control>=0);
-  $('reset-menu').hidden=!data.resetMenu;
-  setText('reset-options',resetChoices.map((label,i)=>`${data.resetMenu===i+1?'▸ ':''}${label}`).join('  ·  '));
+  $('reset-menu').hidden=!data.resetMenu&&!data.factoryReset;
+  $('reset-menu').querySelector('strong').textContent=data.factoryReset?'Reset everything?':'Reset chord slots';
+  $('reset-menu').querySelector('small').textContent=data.factoryReset?'SEL confirms · HOME cancels':'PRESETS chooses · SEL confirms · HOME cancels';
+  setText('reset-options',data.factoryReset?'All settings and chord slots return to factory defaults.':resetChoices.map((label,i)=>`${data.resetMenu===i+1?'▸ ':''}${label}`).join('  ·  '));
   $('guide-knob1').title=rhythmActive?'Six patterns for this mode':'50% normal · below: soft/dark · above: bright/driven · applies to new notes';
   const style=styles[data.mode]??styles[0];
   const patch=instruments[data.tone]??instruments[0];
-  $('instrument').value=String(data.tone);$('instrument').disabled=!enabled||!!data.resetMenu;
+  $('instrument').value=String(data.tone);$('instrument').disabled=!enabled||!!data.resetMenu||!!data.factoryReset;
   $('instrument-description').textContent=patch.description;
   $('instrument-count').textContent=`${patch.family} · ${data.tone+1} / ${instruments.length} · 14 voices shared`;
   $('instrument-mapping').textContent=globals?`Tuning: ${data.tuningName}. K3 changes string layout; chord names stay accurate.`:rhythmActive?'Six chord parts · hold a chord key for rhythm. FX opens the saved voicing and tone controls.':'Six chord parts · soft / normal / accent zones. Knob 4 recalls a voicing for each slot.';
@@ -167,9 +169,9 @@ function publish(data){
   $('lock-shackle').setAttribute('d',data.locked?'M8 10V6a4 4 0 0 1 8 0v4':'M8 10V6a4 4 0 0 1 8 0');
   $('live-summary').classList.toggle('locked',!!data.locked);
   if($('style').value!==String(data.mode))$('style').value=String(data.mode);
-  $('style').disabled=!enabled||!!data.locked||!!data.resetMenu;
-  $('previous-style').disabled=!enabled||!!data.locked||!!data.resetMenu||data.mode===0;
-  $('next-style').disabled=!enabled||!!data.locked||!!data.resetMenu||data.mode===styles.length-1;
+  $('style').disabled=!enabled||!!data.locked||!!data.resetMenu||!!data.factoryReset;
+  $('previous-style').disabled=!enabled||!!data.locked||!!data.resetMenu||!!data.factoryReset||data.mode===0;
+  $('next-style').disabled=!enabled||!!data.locked||!!data.resetMenu||!!data.factoryReset||data.mode===styles.length-1;
   $('style-key').textContent=`${style.family} · ${style.key} · ${data.mode+1} / ${styles.length}${data.custom?' · edited slots':''}`;
   $('style-description').textContent=style.description;
   $('style-lock').textContent=data.locked?'Chord lock is on. Unlock to change style.':'PRESETS chooses chords. Instrument, tuning/transpose, intensity and room stay independent.';
@@ -196,8 +198,8 @@ function publish(data){
   for(const [note,b] of keyControls){b.classList.toggle('lit',!!(data.keys&(1<<note)));b.classList.toggle('muted',!!(data.muted&(1<<note)));}
   for(const [button,b] of buttonControls)b.classList.toggle('lit',!!(data.buttons&(1<<button)));
   for(const {role,dial,valueLabel} of knobs){
-    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:role===5?[data.tuning,data.tuningCount-1]:[0,1]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?5:role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
-    dial.setAttribute('aria-disabled',globals&&role===6?'true':'false');
+    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:role===5?[data.tuning,data.tuningCount-1]:[data.rhythmVelocity,100]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?5:role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
+    dial.setAttribute('aria-disabled',data.factoryReset?'true':'false');
     const valueText=values[role==='master'?7:role];
     if(valueLabel.textContent!==valueText)valueLabel.textContent=valueText;
     dial.setAttribute('aria-valuetext',valueText);

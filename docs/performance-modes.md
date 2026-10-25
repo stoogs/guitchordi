@@ -10,7 +10,7 @@ In Freeplay, black keys select chords silently and only the white keys you touch
 | --- | --- | --- | --- | --- |
 | Freeplay / FX page | Intensity | Transpose | Shared room | Per-slot voicing |
 | Strum play page | Six patterns | Beat division | Gate | Strum sweep (ms) |
-| GLO global settings | Gate tails On/Off | Strum humanity | Guitar tuning | Unused |
+| GLO global settings | Gate tails On/Off | Strum humanity | Guitar tuning | Rhythm velocity |
 | Arp play page | Six patterns | Beat division | Gate | Swing |
 
 Strum patterns: Down, Up, Alternate, Block, Bass + chord, Shuffle. Down/up follow the six string positions, skipping explicit mutes. Bass + chord separates the bass from the remaining simultaneous notes. K4 sets the requested whole-stroke sweep from INSTANT (0 ms), then 5–250 ms in 5 ms steps (default 50 ms). Repeat tempo/division and gate do not set this sweep. At extreme repeat rates the stroke fits within the current step, preventing queued notes spilling into the next stroke. Block stays simultaneous, and Bass + chord uses the sweep to separate its two attacks. Humanity remains available in GLO as a global 0–100% setting in ten-point steps; default 20%. It adds small timing/attack-strength variations, not pitch detuning or distortion.
@@ -23,7 +23,7 @@ Both modes offer 18 divisions: 1/1, 1/2, 1/4, 1/8, 1/16 and 1/32, each in straig
 
 Tempo defaults to 90 BPM. Turn SELECT for 40–240 BPM directly, with no confirmation step. LFO is reserved for future use. SEL remains contextual OK. Tempo changes affect subsequent scheduled intervals. MASTER always controls volume.
 
-FX toggles between the ordinary intensity/transpose/room/voicing controls and Home without replacing rhythm settings or interrupting playback. HOME returns to the performance page. GLO opens global settings: K1 Gate tails, K2 Humanity, K3 Tuning; SEL, GLO or HOME returns to play. Unused K4 does nothing on this page. Gate tails defaults Off, retaining earlier percentage-gate behaviour. ARP cycles all three performance modes. EDIT retains chord assignment and hold-to-reset functionality. The four labelled lines beside the slightly smaller main chord show PAT, DIV, GATE and STRM/SWNG.
+FX toggles between the ordinary intensity/transpose/room/voicing controls and Home without replacing rhythm settings or interrupting playback. HOME returns to the performance page. GLO opens global settings: K1 Gate tails, K2 Humanity, K3 Tuning, K4 Strum/Arp velocity (1–100%, default 80%); SEL, GLO or HOME returns to play. Gate tails defaults Off, retaining earlier percentage-gate behaviour. ARP cycles all three performance modes. EDIT retains chord assignment and hold-to-reset functionality. The four labelled lines beside the slightly smaller main chord show PAT, DIV, GATE and STRM/SWNG.
 
 PLAY or Escape damps sound and clears pending rhythm notes. A chord held through PLAY must be released and pressed again before restarting. Switching performance modes also clears pending automatic notes. No automatic voices are started merely by turning knobs, changing an instrument or restoring saved settings.
 
@@ -31,7 +31,7 @@ PLAY or Escape damps sound and clears pending rhythm notes. A chord held through
 
 Hold ENV continuously for three seconds to lock or unlock the chord. The lock icon warms from amber toward red during the hold; there is no horizontal progress bar. Releasing early cancels. A continuous long hold toggles once. Locked chord selection/voicings remain fixed, while rhythm parameters and tempo remain editable.
 
-SAVE stores performance mode, BPM, both parameter banks and the existing per-slot voicings/settings in a version-10, 45-word browser snapshot. Version-6 rhythm saves migrate their original beat divisions. V6/v7 saves move the old Humanity K4 value into globals and start sweep at 50 ms, with gate tails Off. V8 saves migrate sweep from 25 ms units to 5 ms units. V9 saves keep sweep, gate tails and humanity separately; v10 adds independent tuning, with older snapshots defaulting to Standard EADGBE. Old 21-word (v1–v4) and 32-word (v5) saves remain accepted, defaulting to Freeplay / 90 BPM / factory rhythm settings. Restoring a rhythm mode does not start playback. Device SAVE is still RAM-only pending flash persistence.
+SAVE stores performance mode, BPM, both parameter banks and the existing per-slot voicings/settings in a version-11, 46-word browser snapshot. Version-6 rhythm saves migrate their original beat divisions. V6/v7 saves move the old Humanity K4 value into globals and start sweep at 50 ms, with gate tails Off. V8 saves migrate sweep from 25 ms units to 5 ms units. V9 saves keep sweep, gate tails and humanity separately; v10 adds independent tuning; v11 adds rhythm velocity (older snapshots default to 80%), with older snapshots defaulting to Standard EADGBE. Old 21-word (v1–v4) and 32-word (v5) saves remain accepted, defaulting to Freeplay / 90 BPM / factory rhythm settings. Restoring a rhythm mode does not start playback. Device SAVE is still RAM-only pending flash persistence.
 
 ## Validation and device boundary
 
@@ -40,3 +40,10 @@ The scheduler uses a fixed six-note queue and integer sample timing, without run
 `npm run test:rhythm` covers all 1,080 pattern/division/gate configurations, onset timing, gate lengths and optional release tails, independent strum sweep, FX toggling, swing pair timing, tap/hold/release behavior, mode changes, held-key stop suppression, per-mode parameter recall, snapshots and the three-second lock colour ramp. Native and WASM rhythm audio match exactly across 409,600 samples; native stress also runs under UBSan. Freeplay and sixteen-instrument regression audio remain exact. These checks do not establish FM-1 CPU/latency capacity; physical measurements are still required.
 
 GLO K3 selects one of fourteen [guitar tunings](tuning-presets.md). The current tuning appears above the main chord. This changes the string voicing while preserving the named harmony; use FX transpose for changing the song key.
+
+
+## Attack velocity and factory reset
+
+In Strum and Arp, automatic notes and normal white strum keys use an 80% attack by default. Soft keys use half that strength (40% at default), and accent keys use 1.25 times the strength (100% at default), capped at 100%. GLO K4 adjusts the common rhythm velocity in one-point steps, independently of tone Intensity. Freeplay retains its existing soft/normal/accent strengths. Strum humanity adds its existing small variations around the selected velocity, bounded to 1–100%. The current device input reports binary presses; this is attack-level control, not measured pressure or strike velocity. Attacks still start immediately through the existing audio path.
+
+Hold GLO continuously for three seconds to open **Reset everything?**. Nothing resets until a fresh SEL press. HOME cancels. The prompt stops sound and blocks playing, knobs and preset changes. Confirmation restores instrument, style, all chord slots and voicings, tuning, transpose, lock, tempo, mode, rhythm banks, effects, master and global settings. It publishes a fresh browser save so a reload retains factory settings. Browser-only visuals and mute preferences are separate. Device snapshots remain RAM-only. Held GLO cannot open the prompt again until released; keys held during reset must be released before playing again.
