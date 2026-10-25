@@ -1,5 +1,7 @@
 # Guitchordi
 
+[Print the one-page A4 controls cheatsheet](output/pdf/Guitchordi-Cheatsheet-A4.pdf) - labelled control diagram, mode chart, lock and reset shortcuts.
+
 Independent M-VAVE FM-1 six-string instrument simulator. [brief.md](brief.md) is the project brief.
 
 [Illustrated player manual](http://localhost:8769/manual/) · [Printable PDF](output/pdf/Guitchordi-Manual.pdf)
