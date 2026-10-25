@@ -24,7 +24,7 @@ Outputs:
 - `build/fm1/guitchordi-experimental.fwsc`: development package, identity `FM-1_900`.
 - `build/fm1/report.json`, `symbols.txt`, `sections.txt`, `disassembly.txt`: measured build evidence.
 
-Current measured app: **75,620 bytes**, main RAM data/BSS: **55,892 bytes**, framebuffer pool: **115,200 bytes**, loader: **6,528 bytes**, package: **609,684 bytes**. These link-time sizes exclude stack usage and do not establish real-time CPU capacity. [Exact report](fm1-build-measurements.json).
+Current measured app: **216,828 bytes**, main RAM data/BSS: **55,896 bytes**, framebuffer pool: **115,200 bytes**, loader: **6,528 bytes**, package: **609,684 bytes**. Alternate tuning shapes are compact constant fret tables in flash; no audio-time voicing search is used. These link-time sizes exclude stack usage and do not establish real-time CPU capacity. [Exact report](fm1-build-measurements.json).
 
 The development identity is inherited from the reference tooling. Choose a deliberate release identity/version and verify installer matching before publication; this is not presented as a Felucca release.
 
@@ -42,7 +42,7 @@ Boot code arms the watchdog, installs exception vectors/guards and includes boot
 - SAVE makes the C snapshot in RAM only. Flash-backed persistence and calibration storage are pending; LCD text explicitly says RAM only.
 - The physical button/encoder map starts from Felucca's defaults. Calibration and key/LED correspondence need the actual unit.
 - CPU load, worst render time, dropouts, stack depth, latency, codec output and fourteen-voice behavior have not been measured on FM-1. `gm_device` contains maximum render time, late-half and frame counters for bring-up instrumentation.
-- Tuning remains standard EADGBE. [Alternate tunings](tuning-presets.md) are recorded for later and are not loaded by runtime code.
+- Standard EADGBE is the default; GLO K3 now selects fourteen [guitar tunings](tuning-presets.md) using precomputed chord-preserving voicings.
 
 ## Validation boundary
 

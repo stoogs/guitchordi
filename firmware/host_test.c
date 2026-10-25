@@ -108,6 +108,12 @@ int main(int argc, char **argv) {
         }
     }
     assert(fw_attacks()==0);fixture_boot();
+    // Exercise all tuning table dimensions under UBSan without producing audio.
+    for(int t=0;t<fw_tuning_count();t++) {
+        fw_button(5,1);fw_button(5,0);fw_encoder(5,1);fw_button(1,1);fw_button(1,0);
+        for(int slot=0;slot<11;slot++)for(int part=0;part<6;part++){int p=fw_slot_pitch(slot,part);assert(p==-1 || (p>=24 && p<=96));}
+    }
+    fixture_boot();
     if (argc != 2) return 2;
     FILE *f = fopen(argv[1], "wb"); assert(f);
     for (int b = 0; b < 1200; b++) {

@@ -21,8 +21,8 @@ function advance(ms){let n=Math.round(ms*44.1);while(n){const count=Math.min(n,1
 e.fw_button(2,1);advance(2999);assert.equal(e.fw_locked(),0);advance(2);assert.equal(e.fw_locked(),1);advance(5100);assert.equal(e.fw_locked(),1);e.fw_button(2,0);
 e.fw_keys(1<<1);e.fw_keys(0);assert.equal(e.fw_selected(),1);
 e.fw_button(7,1);e.fw_button(7,0);
-const saved=new Uint32Array(e.memory.buffer,e.fw_store(),44).slice();
-fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),44).set(saved);assert.equal(e.fw_restore(),1);assert.equal(e.fw_locked(),1);
+const saved=new Uint32Array(e.memory.buffer,e.fw_store(),45).slice();
+fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),45).set(saved);assert.equal(e.fw_restore(),1);assert.equal(e.fw_locked(),1);
 e.fw_panic();assert.equal(e.gm_active(),0);
 fixtureBoot();
 const white=[0,2,4,6,7,9,11,12,14,16,18,19,21,23,24,26];
@@ -55,11 +55,11 @@ for(let mode=0;mode<50;mode++){
   }
 }
 fixtureBoot();e.fw_set_mode(26);e.fw_button(7,1);e.fw_button(7,0);
-const modeSave=new Uint32Array(e.memory.buffer,e.fw_store(),44).slice();
-fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),44).set(modeSave);assert.equal(e.fw_restore(),1);assert.equal(e.fw_mode(),26);
+const modeSave=new Uint32Array(e.memory.buffer,e.fw_store(),45).slice();
+fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),45).set(modeSave);assert.equal(e.fw_restore(),1);assert.equal(e.fw_mode(),26);
 // Legacy v1 snapshots retain their original eleven voicing IDs and custom tone.
 const legacy=new Uint32Array([0x474d0001,1,1,75,100,12,12,0,0,1,2,3,4,5,6,7,8,9,10,0,0]);
-fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),44).set(legacy);assert.equal(e.fw_restore(),1);assert.equal(e.fw_mode(),0);assert.equal(e.fw_tone(),1);assert.equal(name(e.fw_slot_name(0)),'C');
+fixtureBoot();new Uint32Array(e.memory.buffer,e.fw_store(),45).set(legacy);assert.equal(e.fw_restore(),1);assert.equal(e.fw_mode(),0);assert.equal(e.fw_tone(),1);assert.equal(name(e.fw_slot_name(0)),'C');
 e.fw_button(2,1);advance(3001);e.fw_button(2,0);assert.equal(e.fw_locked(),1);assert.equal(e.fw_set_mode(2),0);assert.equal(e.fw_mode(),0);
 assert.equal(e.fw_set_mode(-1),0);assert.equal(e.fw_set_mode(50),0);
 console.log(JSON.stringify({styles_tested:50,slots_tested:550,white_contacts_tested:8800,native_wasm_max_float_difference:diff,peak,attacks:4,framebuffer:'240x240 RGB565 from C',state_bytes:e.fw_state_bytes(),lock:'ENV 3s once per hold',storage:'validated restore'},null,2));

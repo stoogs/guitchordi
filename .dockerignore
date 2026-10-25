@@ -15,3 +15,7 @@
 !scripts/build-simulator.sh
 !scripts/generate-firmware-bank.py
 !nginx.simulator.conf
+
+!scripts/tuning-voicings.py
+!docs/
+!docs/tuning-presets.json

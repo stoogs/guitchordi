@@ -4,7 +4,7 @@ const bank=JSON.parse(fs.readFileSync('web/chords.json')).voicings;
 const shapes=JSON.parse(fs.readFileSync('build/generated/chord-shapes.json'));
 const patches=JSON.parse(fs.readFileSync('web/instruments.json')).instruments;
 const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('build/simulator.wasm')),{}).exports;e._initialize();e.fw_boot();e.fw_button(7,1);e.fw_button(7,0);
-const original=new Uint32Array(e.memory.buffer,e.fw_store(),44).slice();
+const original=new Uint32Array(e.memory.buffer,e.fw_store(),45).slice();
 let checked=0;
 for(const [chord,options] of Object.entries(shapes)) {
  const chordID=Object.keys(bank).indexOf(chord),pcs=ns=>[...new Set(ns.filter(n=>n>=0).map(n=>n%12))].sort((a,b)=>a-b);
@@ -13,7 +13,7 @@ for(const [chord,options] of Object.entries(shapes)) {
  for(let choice=0;choice<6;choice++) {
   assert.deepEqual(pcs(options[choice]),pcs(options[0]));
   const snapshot=original.slice();snapshot[1]=0;snapshot[8]=chordID;snapshot[21]=choice;
-  new Uint32Array(e.memory.buffer,e.fw_store(),44).set(snapshot);assert.equal(e.fw_restore(),1);
+  new Uint32Array(e.memory.buffer,e.fw_store(),45).set(snapshot);assert.equal(e.fw_restore(),1);
   assert.equal(e.fw_voicing(),choice);assert.equal(e.fw_voicing_count(),6);
   for(let part=0;part<6;part++)assert.equal(e.fw_slot_pitch(0,part),options[choice][part]);
   for(let tone=0;tone<16;tone++) {

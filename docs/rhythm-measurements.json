@@ -36,7 +36,7 @@
   "max_float_difference": 0,
   "native_ubsan": "passed",
   "timing_gate_swing_release_stop_mode_changes": "passed",
-  "storage": "v9 44 words; v8 sweep-unit and v6/v7 humanity migration",
+  "storage": "v10 45 words; legacy v1\u2013v9 defaults to Standard tuning; previous sweep/humanity migrations retained",
   "lock": "ENV 3 seconds, colour ramp and once-per-hold tested",
   "physical_cpu_latency": "unmeasured",
   "division_tempo_timing_cases": 54,

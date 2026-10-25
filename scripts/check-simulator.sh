@@ -10,3 +10,5 @@ node tests/simulator.integration.mjs
 node tests/voicings.integration.mjs
 
 node tests/harmony.integration.mjs
+
+node tests/tunings.integration.mjs

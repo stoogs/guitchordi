@@ -1,3 +1,7 @@
+## Guitar tuning selector — 25 October 2026
+
+GLO K3 now selects all fourteen planned guitar tunings. Standard EADGBE remains the default and preserves every existing voicing. Alternate tunings use generated compact fret tables: 294 chords × six shapes per tuning, exact chord pitch classes, open strings/four-fret windows and at most four distinct stopped frets. Active tuning is displayed above the main chord; GLO also shows open-string pitch names. ENV lock blocks tuning changes; instrument/style changes preserve tuning. New attacks use the new grip; existing tails are not retuned. Snapshot v10/45 words migrates all previous saves to Standard. Tests cover 24,696 shapes / 148,176 string pitches, low Drop-D bass, open-D all-open grip and setting persistence/independence.
+
 ## Factory defaults, fine sweep and first-device audit — 25 October 2026
 
 Steel Acoustic + Classic Rock + standard EADGBE + 90 BPM are the factory settings. Strum defaults are Down / 1/8 / FREE / 50 ms. K4 offers INSTANT then 5 ms steps up to 250 ms; v9/44-word snapshots migrate v8 25 ms units while preserving duration. Browser checked at INSTANT → 5 ms and restored/saved at 50 ms with the factory sound/style.

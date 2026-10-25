@@ -2,7 +2,7 @@
 #define GUITOMNICHORD_APP_H
 #include <stdint.h>
 #define FW_SCREEN 240
-#define FW_STORE_WORDS 44
+#define FW_STORE_WORDS 45
 void fw_boot(void);
 void fw_keys(uint32_t mask);
 void fw_button(int button, int down);
@@ -51,6 +51,11 @@ int fw_play_mode(void);
 int fw_bpm(void);
 int fw_gate_tails(void);
 int fw_humanity(void);
+int fw_tuning(void);
+int fw_tuning_count(void);
+const char *fw_tuning_name(int index);
+const char *fw_tuning_label(void);
+int fw_open_pitch(int part);
 int fw_tempo_edit(void);
 int fw_rhythm_param(int index);
 int fw_running(void);

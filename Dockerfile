@@ -4,7 +4,8 @@ COPY dsp/ ./dsp/
 COPY third_party/clipper-phys/ ./third_party/clipper-phys/
 COPY firmware/ ./firmware/
 COPY web/chords.json web/styles.json ./web/
-COPY scripts/build-dsp.sh scripts/build-simulator.sh scripts/generate-firmware-bank.py ./scripts/
+COPY scripts/build-dsp.sh scripts/build-simulator.sh scripts/generate-firmware-bank.py scripts/tuning-voicings.py ./scripts/
+COPY docs/tuning-presets.json ./docs/tuning-presets.json
 RUN sh scripts/build-dsp.sh && sh scripts/build-simulator.sh
 
 FROM nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 AS instrument

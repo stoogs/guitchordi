@@ -27,13 +27,14 @@ static uint32_t room_cursor, control_at;
 static int last_control, reset_choice = -1, edit_fired;
 static uint32_t edit_started;
 static int play_mode,bpm=90,tempo_edit, rhythm[2][4]={{0,9,4,10},{0,9,4,0}};
-static int gate_tails,humanity=2;
+static int gate_tails,humanity=2,tuning;
 static uint32_t sample_clock,next_tick,step_fraction,rhythm_step,rhythm_rng=0x8769u;
 static int auto_running,queued;
 static uint32_t auto_blocked;
 typedef struct { uint32_t due; int part,pitch,tone,character,gate; float strength; } auto_note;
 static auto_note auto_notes[6];
 static float auto_output[GM_BLOCK];
+static const char *const tuning_pitch_names[]={"C","C#","D","EB","E","F","F#","G","AB","A","BB","B"};
 static const char *const play_names[]={"Freeplay","Strum","Arp"};
 static const char *const division_names[]={"1/1","1/1D","1/1T","1/2","1/2D","1/2T","1/4","1/4D","1/4T","1/8","1/8D","1/8T","1/16","1/16D","1/16T","1/32","1/32D","1/32T"};
 static const char *const strum_names[]={"DOWN","UP","ALTERNATE","BLOCK","BASS+CHORD","SHUFFLE"};
@@ -43,6 +44,11 @@ int fw_play_mode(void) { return play_mode; }
 int fw_bpm(void) { return bpm; }
 int fw_gate_tails(void) { return gate_tails; }
 int fw_humanity(void) { return humanity*10; }
+int fw_tuning(void) { return tuning; }
+int fw_tuning_count(void) { return FW_TUNINGS; }
+const char *fw_tuning_name(int index) { return index>=0 && index<FW_TUNINGS?tuning_names[index]:""; }
+const char *fw_tuning_label(void) { return tuning_labels[tuning]; }
+int fw_open_pitch(int part) { return part>=0 && part<6?tuning_opens[tuning][part]:-1; }
 int fw_tempo_edit(void) { return tempo_edit; }
 int fw_rhythm_param(int i) { return i>=0 && i<4 ? rhythm[play_mode==2][i] : -1; }
 int fw_running(void) { return auto_running || queued; }
@@ -132,7 +138,12 @@ int fw_mode(void) { return mode; }
 int fw_mode_count(void) { return FW_MODES; }
 const char *fw_mode_name(int index) { return index >= 0 && index < FW_MODES ? mode_names[index] : ""; }
 const char *fw_slot_name(int slot) { return slot >= 0 && slot < 11 ? chord_names[slots[slot]] : ""; }
-int fw_slot_pitch(int slot,int part) { return slot>=0 && slot<11 && part>=0 && part<6 ? chord_shapes[slots[slot]][slot_shapes[slot]][part] : -1; }
+int fw_slot_pitch(int slot,int part) {
+    if(slot<0 || slot>=11 || part<0 || part>=6)return -1;
+    if(!tuning)return chord_shapes[slots[slot]][slot_shapes[slot]][part];
+    int fret=tuning_frets[tuning-1][slots[slot]][slot_shapes[slot]][part];
+    return fret<0?-1:tuning_opens[tuning][part]+fret;
+}
 // Explainable next-chord guide, evaluated only for UI/LED polling, never per sample.
 // Levels: 0 current, 1 adventurous, 2 colour, 3 smooth/strong. No chord is blocked.
 static int hint_slots[11],hint_from=-1,hint_mode=-1;
@@ -205,7 +216,7 @@ uint32_t fw_now(void) { return clock_ms; }
 uint32_t fw_attacks(void) { return attacks; }
 uint32_t fw_store_version(void) { return store_version; }
 uint32_t *fw_store(void) { return settings; }
-int fw_state_bytes(void) { return gm_state_bytes() + sizeof framebuffer + sizeof room_line + sizeof slots + sizeof slot_shapes + sizeof settings + sizeof auto_notes + sizeof auto_output + sizeof rhythm + sizeof hint_slots + sizeof hint_levels + sizeof hint_reasons + sizeof hint_from + sizeof hint_mode + sizeof gate_tails + sizeof humanity; }
+int fw_state_bytes(void) { return gm_state_bytes() + sizeof framebuffer + sizeof room_line + sizeof slots + sizeof slot_shapes + sizeof settings + sizeof auto_notes + sizeof auto_output + sizeof rhythm + sizeof hint_slots + sizeof hint_levels + sizeof hint_reasons + sizeof hint_from + sizeof hint_mode + sizeof gate_tails + sizeof humanity + sizeof tuning; }
 static int bound(int x, int lo, int hi) { return x < lo ? lo : x > hi ? hi : x; }
 static int string_of(int key) { return gm_part(tone,key < 12 ? key % 6 : key - 10); }
 int fw_key_pitch(int key) {
@@ -217,7 +228,7 @@ void fw_panic(void) { auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u
 void fw_boot(void) {
     fw_panic(); memcpy(slots, mode_slots[16], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
     selected = 0; locked = page = editing = transpose = 0;tone=4;mode=16;
-    auto_blocked=0;play_mode=tempo_edit=gate_tails=0;humanity=2;bpm=90;sample_clock=next_tick=step_fraction=rhythm_step=0;rhythm_rng=0x8769u;
+    auto_blocked=0;play_mode=tempo_edit=gate_tails=tuning=0;humanity=2;bpm=90;sample_clock=next_tick=step_fraction=rhythm_step=0;rhythm_rng=0x8769u;
     int defaults[2][4]={{0,9,4,10},{0,9,4,0}};memcpy(rhythm,defaults,sizeof rhythm);
     volume = 60; velocity = 50; room = 12; last_key = last_pitch = -1;
     attacks = store_version = clock_ms = hold_started = 0; clock_remainder = 0; last_control = -1; control_at = 0;
@@ -245,18 +256,18 @@ void fw_keys(uint32_t mask) {
     keys = mask;
 }
 static void save(void) {
-    settings[0] = 0x474d0009u; settings[1] = (uint32_t)selected; settings[2] = (uint32_t)tone;
+    settings[0] = 0x474d000au; settings[1] = (uint32_t)selected; settings[2] = (uint32_t)tone;
     settings[3] = (uint32_t)volume; settings[4] = (uint32_t)velocity; settings[5] = (uint32_t)room;
     settings[6] = (uint32_t)(transpose + 12); settings[7] = (uint32_t)locked;
     for (int i = 0; i < 11; i++) settings[8 + i] = (uint32_t)slots[i];
     for(int i=0;i<11;i++) settings[21+i]=(uint32_t)slot_shapes[i];
     settings[32]=(uint32_t)play_mode;settings[33]=(uint32_t)bpm;
     for(int i=0;i<8;i++)settings[34+i]=(uint32_t)rhythm[i/4][i%4];
-    settings[42]=(uint32_t)gate_tails;settings[43]=(uint32_t)humanity;
+    settings[42]=(uint32_t)gate_tails;settings[43]=(uint32_t)humanity;settings[44]=(uint32_t)tuning;
     settings[19] = (uint32_t)mode; settings[20] = 1; store_version++;
 }
 int fw_restore(void) {
-    if ((settings[0] != 0x474d0001u && settings[0] != 0x474d0002u && settings[0] != 0x474d0003u && settings[0] != 0x474d0004u && settings[0] != 0x474d0005u && settings[0] != 0x474d0006u && settings[0] != 0x474d0007u && settings[0] != 0x474d0008u && settings[0] != 0x474d0009u) || settings[1] >= 11 || settings[2] >= (settings[0] >= 0x474d0003u ? (uint32_t)gm_tone_count() : 3u) ||
+    if ((settings[0] != 0x474d0001u && settings[0] != 0x474d0002u && settings[0] != 0x474d0003u && settings[0] != 0x474d0004u && settings[0] != 0x474d0005u && settings[0] != 0x474d0006u && settings[0] != 0x474d0007u && settings[0] != 0x474d0008u && settings[0] != 0x474d0009u && settings[0] != 0x474d000au) || settings[1] >= 11 || settings[2] >= (settings[0] >= 0x474d0003u ? (uint32_t)gm_tone_count() : 3u) ||
         settings[3] > 100 || (settings[0] < 0x474d0004u && settings[4] < 10) || settings[4] > 100 || settings[5] > 100 || settings[6] > 24 || settings[7] > 1) return 0;
     if (settings[0] != 0x474d0001u && (settings[19] >= FW_MODES || settings[20] != 1)) return 0;
     for (int i = 0; i < 11; i++) if (settings[8 + i] >= FW_CHORDS) return 0;
@@ -266,7 +277,9 @@ int fw_restore(void) {
         for(int i=0;i<8;i++) if(settings[34+i]>(uint32_t)(i%4==0?5:i%4==1?(settings[0]==0x474d0006u?5:17):i%4==2?(settings[0]==0x474d0006u?3:4):i<4?(settings[0]>=0x474d0009u?50:10):12))return 0;
     }
     if(settings[0]>=0x474d0008u && (settings[42]>1 || settings[43]>10))return 0;
+    if(settings[0]==0x474d000au && settings[44]>=FW_TUNINGS)return 0;
     rhythm_cancel();tempo_edit=0;
+    tuning=settings[0]==0x474d000au?(int)settings[44]:0;
     play_mode=settings[0]>=0x474d0006u?(int)settings[32]:0;bpm=settings[0]>=0x474d0006u?(int)settings[33]:90;
     int defaults[2][4]={{0,9,4,10},{0,9,4,0}};memcpy(rhythm,defaults,sizeof rhythm);
     if(settings[0]>=0x474d0006u)for(int i=0;i<8;i++)rhythm[i/4][i%4]=(int)settings[34+i];
@@ -323,7 +336,7 @@ void fw_encoder(int role, int delta) {
     control_touch(role);
     if(reset_choice>=0) { if(role==2) reset_choice=bound(reset_choice+delta,0,2); return; }
     if(role==0) { bpm=bound(bpm+delta,40,240);return; }
-    if(page==3 && role>=3 && role<=6) { if(role==3)gate_tails=bound(gate_tails+delta,0,1);else if(role==4)humanity=bound(humanity+delta,0,10);return; }
+    if(page==3 && role>=3 && role<=6) { if(role==3)gate_tails=bound(gate_tails+delta,0,1);else if(role==4)humanity=bound(humanity+delta,0,10);else if(role==5 && !locked)tuning=bound(tuning+delta,0,FW_TUNINGS-1);return; }
     if(play_mode && page==0 && role>=3 && role<=6) {
         int i=role-3,*params=rhythm[play_mode==2];params[i]=bound(params[i]+delta,0,i==0?5:i==1?17:i==2?4:play_mode==1?50:12);return;
     }
@@ -463,8 +476,8 @@ uint16_t *fw_frame(void) {
         char pattern[4]={(char)('1'+p[0]),'/', '6',0};display_text(25,30,pattern,18,white_ink);
         display_text(75,30,division_names[p[1]],14,white_ink);if(p[2]==4)display_text(125,30,"FREE",14,white_ink);else knob_value(125,(p[2]+1)*25,1,0,white_ink);if(play_mode==1 && !p[3])display_text(175,30,"INST",14,white_ink);else knob_value(175,p[3]*5,play_mode==2,0,white_ink);
     } else if(page==3) {
-        text(8,4,"1 TAIL",1,mint);text(72,4,"2 HUMAN",1,mint);
-        display_text(30,30,gate_tails?"ON":"OFF",18,white_ink);knob_value(100,humanity*10,1,0,white_ink);
+        text(8,4,"1 TAIL",1,mint);text(66,4,"2 HUMAN",1,mint);text(133,4,"3 TUNE",1,mint);
+        display_text(28,30,gate_tails?"ON":"OFF",18,white_ink);knob_value(90,humanity*10,1,0,white_ink);number(155,18,tuning+1,1,white_ink);text(171,18,"/14",1,dim);
     } else {
         text(8,4,"1 INT",1,mint); text(58,4,"2 TRN",1,mint);
         text(104,4,"3 ROOM",1,mint); text(154,4,"4 VOIC",1,mint);
@@ -487,7 +500,8 @@ uint16_t *fw_frame(void) {
     const char *chord = chord_names[slots[selected]];
     int chord_width=rhythm_controls?112:148, chord_center=rhythm_controls?60:80;
     int title_size=!rhythm_controls && display_width(chord,display_glyphs_36)<=chord_width?36:display_width(chord,display_glyphs_26)<=chord_width?26:18;
-    display_text(chord_center,108,chord,title_size,white_ink);
+    display_text(chord_center,85,tuning_labels[tuning],12,mint);
+    display_text(chord_center,114,chord,title_size,white_ink);
     rect(rhythm_controls?120:160,77,1,41,0x2166);
     if(rhythm_controls) {
         int *p=rhythm[play_mode==2];
@@ -503,12 +517,11 @@ uint16_t *fw_frame(void) {
         else { text(174,108,"V",1,dim); number(186,108,gm_active(),1,white_ink); text(204,108,"/14",1,dim); }
     }
     if (page == 0) {
-        const char *labels[] = {"E","A","D","G","B","E"};
         int count=gm_parts(tone), step=count==4?48:38;
         int start=(240-(count-1)*step-24)/2;
         for (int i=0; i<count; i++) {
             if(tone>=11) { char part[2]={(char)('1'+i),0}; display_text(start+12+i*step,130,part,14,dim); }
-            else display_text(start+12+i*step,130,labels[i],14,dim);
+            else display_text(start+12+i*step,130,tuning_pitch_names[tuning_opens[tuning][i]%12],14,dim);
             int pitch = fw_slot_pitch(selected,gm_part(tone,i));
             uint16_t ink=white_ink;
             if(last_key>=0 && string_of(last_key)==gm_part(tone,i))
@@ -534,10 +547,12 @@ uint16_t *fw_frame(void) {
         text(10,156,"MASTER",1,dim); number(140,156,volume,1,white_ink);
 
     } else {
-        text(10,123,"GLOBAL SETTINGS",1,mint);
-        text(10,135,"K1 GATE TAILS:",1,dim);text(110,135,gate_tails?"ON":"OFF",1,white_ink);
-        text(10,147,"K2 HUMANITY:",1,dim);number(110,147,humanity*10,1,white_ink);text(132,147,"%",1,dim);
-        text(10,158,"SEL / GLO: HOME",1,mint);
+        text(10,123,"K1 TAILS:",1,dim);text(74,123,gate_tails?"ON":"OFF",1,white_ink);
+        text(120,123,"K2 HUMAN:",1,dim);number(180,123,humanity*10,1,white_ink);text(199,123,"%",1,dim);
+        text(10,135,"K3 TUNING:",1,dim);text(76,135,tuning_labels[tuning],1,mint);
+        text(10,147,"OPEN:",1,dim);
+        for(int i=0;i<6;i++)text(45+i*30,147,tuning_pitch_names[tuning_opens[tuning][i]%12],1,white_ink);
+        text(10,158,locked?"ENV LOCK: TUNING HELD":"SEL / GLO: HOME",1,mint);
     }
     if(reset_choice>=0) {
         rect(5,120,230,46,0x0842);

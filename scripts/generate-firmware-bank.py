@@ -73,6 +73,23 @@ for style in styles:
  scales.append(mask)
 out+=['static const uint8_t mode_tonics[FW_MODES] = {'+','.join(map(str,tonics))+'};',
       'static const uint16_t mode_scales[FW_MODES] = {'+','.join(map(str,scales))+'};']
+# Alternate tunings are immutable compact fret tables in flash, generated once at build time.
+import runpy
+make_tuning=runpy.run_path('scripts/tuning-voicings.py')['voicings']
+tunings=json.loads(Path('docs/tuning-presets.json').read_text())['presets']
+out+=['#define FW_TUNINGS '+str(len(tunings)),
+ 'static const char *const tuning_names[FW_TUNINGS] = {'+','.join(quote(t['name']) for t in tunings)+'};',
+ 'static const char *const tuning_labels[FW_TUNINGS] = {'+','.join(quote(t['label']) for t in tunings)+'};',
+ 'static const int8_t tuning_opens[FW_TUNINGS][6] = {'+','.join('{'+','.join(map(str,t['midi']))+'}' for t in tunings)+'};',
+ 'static const int8_t tuning_frets[FW_TUNINGS-1][FW_CHORDS][FW_SHAPES][6] = {']
+tuning_shapes={}
+for tuning in tunings[1:]:
+ options=[make_tuning(tuning['midi'],bank['voicings'][name],roots[metadata[name]['root']]) for name in names]
+ tuning_shapes[tuning['id']]=dict(zip(names,options))
+ out.append('{'+','.join('{'+','.join('{'+','.join(map(str,notes))+'}' for notes in chord)+'}' for chord in options)+'},')
+ print('Tuning shapes:',tuning['name'],flush=True)
+out+=['};']
+Path('build/generated/tuning-shapes.json').write_text(json.dumps(tuning_shapes))
 Path('build/generated/fw_bank.h').write_text('\n'.join(out)+'\n')
 print(f'Voicings: {len(shapes)} chords, {min(map(len,shapes))}–{max(map(len,shapes))} distinct shapes each')
 

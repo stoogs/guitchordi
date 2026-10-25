@@ -1,5 +1,5 @@
 {
-  "status": "planned-not-loaded-by-runtime",
+  "status": "active",
   "default": "standard",
   "stringOrder": "low to high",
   "presets": [
@@ -14,7 +14,8 @@
         55,
         59,
         64
-      ]
+      ],
+      "label": "STD EADGBE"
     },
     {
       "id": "drop-d",
@@ -27,7 +28,8 @@
         55,
         59,
         64
-      ]
+      ],
+      "label": "DROP D"
     },
     {
       "id": "double-drop-d",
@@ -40,7 +42,8 @@
         55,
         59,
         62
-      ]
+      ],
+      "label": "DOUBLE DROP D"
     },
     {
       "id": "open-d",
@@ -53,7 +56,8 @@
         54,
         57,
         62
-      ]
+      ],
+      "label": "OPEN D"
     },
     {
       "id": "open-g",
@@ -66,7 +70,8 @@
         55,
         59,
         62
-      ]
+      ],
+      "label": "OPEN G"
     },
     {
       "id": "open-e",
@@ -79,7 +84,8 @@
         56,
         59,
         64
-      ]
+      ],
+      "label": "OPEN E"
     },
     {
       "id": "open-a",
@@ -92,7 +98,8 @@
         57,
         61,
         64
-      ]
+      ],
+      "label": "OPEN A"
     },
     {
       "id": "dadgad",
@@ -105,7 +112,8 @@
         55,
         57,
         62
-      ]
+      ],
+      "label": "DADGAD"
     },
     {
       "id": "open-d-minor",
@@ -118,7 +126,8 @@
         53,
         57,
         62
-      ]
+      ],
+      "label": "OPEN D MIN"
     },
     {
       "id": "open-g-minor",
@@ -131,7 +140,8 @@
         55,
         58,
         62
-      ]
+      ],
+      "label": "OPEN G MIN"
     },
     {
       "id": "open-c",
@@ -144,7 +154,8 @@
         55,
         60,
         64
-      ]
+      ],
+      "label": "OPEN C"
     },
     {
       "id": "open-d6",
@@ -157,7 +168,8 @@
         54,
         59,
         62
-      ]
+      ],
+      "label": "OPEN D6"
     },
     {
       "id": "half-step-down",
@@ -170,7 +182,8 @@
         54,
         58,
         63
-      ]
+      ],
+      "label": "EB STANDARD"
     },
     {
       "id": "whole-step-down",
@@ -183,7 +196,8 @@
         53,
         57,
         62
-      ]
+      ],
+      "label": "D STANDARD"
     }
   ]
 }

@@ -123,21 +123,21 @@ function publish(data){
   setText('guide-preset-help',data.resetMenu?'Turn PRESETS · tap SEL to confirm':data.editing?'EDIT is on · PRESETS reassigns the selected slot':'PRESETS chooses the chord style · 50 banks');
   const globals=data.page===3;
   if(globals){
-    const globalNames=['Gate tails','Strum humanity','Unused','Unused'];
-    const globalValues=[data.gateTails?'ON':'OFF',`${data.humanity}%`,'—','—'];
+    const globalNames=['Gate tails','Strum humanity','Tuning','Unused'];
+    const globalValues=[data.gateTails?'ON':'OFF',`${data.humanity}%`,data.tuningName,'—'];
     for(let i=0;i<4;i++){values[i+3]=globalValues[i];names[i+3]=`KNOB ${i+1} · ${globalNames[i]}`;}
   }
   const freeLabels=['Intensity','Transpose','Shared room','Chord voicing'];
   for(let i=0;i<4;i++){
     setText(`guide-knob${i+1}`,values[i+3]);
-    document.querySelector(`[data-control="${i+3}"]>span`).textContent=`Knob ${i+1} · ${globals?['Gate tails','Strum humanity','Unused','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i]}`;
-    knobs.find(k=>k.role===i+3).dial.parentElement.querySelector('small').textContent=globals?['Gate tails','Strum humanity','Unused','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i];
+    document.querySelector(`[data-control="${i+3}"]>span`).textContent=`Knob ${i+1} · ${globals?['Gate tails','Strum humanity','Tuning','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i]}`;
+    knobs.find(k=>k.role===i+3).dial.parentElement.querySelector('small').textContent=globals?['Gate tails','Strum humanity','Tuning','Unused'][i]:rhythmActive?rhythmLabels[i]:freeLabels[i];
   }
   $('select-help').textContent='Turn SELECT for 40–240 BPM · ARP cycles Freeplay / Strum / Arp';
   $('chord-hint').textContent=data.locked?'ENV lock holds the current chord · unlock to follow suggestions.':'Next chord: green / bright = smooth or strong · amber / medium = colour · red / dim = adventurous. Suggestions, not rules.';
-  $('performance-hint').textContent=globals?'Global settings · K1: percentage-gate tails On/Off · K2: strum humanity · SEL / GLO / HOME returns to play.':data.performance?`${performanceNames[data.performance]} · ${data.bpm} BPM · ${data.running?'Playing':'Hold a black chord key to play'} · SELECT sets BPM; ARP cycles modes; FX toggles tone / Home; GLO sets gate tails and humanity.`:'Freeplay · direct key attacks. Press ARP for Strum or Arp. SELECT sets BPM.';
+  $('performance-hint').textContent=globals?'Global settings · K1: percentage-gate tails On/Off · K2: strum humanity · K3: tuning · SEL / GLO / HOME returns to play.':data.performance?`${performanceNames[data.performance]} · ${data.bpm} BPM · ${data.running?'Playing':'Hold a black chord key to play'} · SELECT sets BPM; ARP cycles modes; FX toggles tone / Home; GLO sets gate tails and humanity.`:'Freeplay · direct key attacks. Press ARP for Strum or Arp. SELECT sets BPM.';
   document.querySelectorAll('[data-control]').forEach(card=>card.classList.toggle('active',Number(card.dataset.control)===data.control));
-  setText('control-feedback',data.control>=0?`${names[data.control]}: ${data.locked&&(data.control===2 || (!rhythmActive&&data.control===6))?'Chord locked':values[data.control]}`:'Turn a knob to see its function and value here.');
+  setText('control-feedback',data.control>=0?`${names[data.control]}: ${data.locked&&(data.control===2 || (globals&&data.control===5) || (!rhythmActive&&!globals&&data.control===6))?'Chord locked':values[data.control]}`:'Turn a knob to see its function and value here.');
   $('control-feedback').classList.toggle('active',data.control>=0);
   $('reset-menu').hidden=!data.resetMenu;
   setText('reset-options',resetChoices.map((label,i)=>`${data.resetMenu===i+1?'▸ ':''}${label}`).join('  ·  '));
@@ -147,12 +147,12 @@ function publish(data){
   $('instrument').value=String(data.tone);$('instrument').disabled=!enabled||!!data.resetMenu;
   $('instrument-description').textContent=patch.description;
   $('instrument-count').textContent=`${patch.family} · ${data.tone+1} / ${instruments.length} · 14 voices shared`;
-  $('instrument-mapping').textContent=rhythmActive?'Six chord parts · hold a chord key for rhythm. FX opens the saved voicing and tone controls.':'Six chord parts · soft / normal / accent zones. Knob 4 recalls a voicing for each slot.';
-  const mappingSignature=[data.tone,data.chord,data.voicing,data.transpose].join(':');
+  $('instrument-mapping').textContent=globals?`Tuning: ${data.tuningName}. K3 changes string layout; chord names stay accurate.`:rhythmActive?'Six chord parts · hold a chord key for rhythm. FX opens the saved voicing and tone controls.':'Six chord parts · soft / normal / accent zones. Knob 4 recalls a voicing for each slot.';
+  const mappingSignature=[data.tone,data.chord,data.voicing,data.transpose,data.tuning].join(':');
   if(mappingTone!==mappingSignature){mappingTone=mappingSignature;WHITE.forEach((note,key)=>{
     const original=key<12?key%6:key-10,part=patch.mapping[original],b=keyControls.get(note),pitch=data.pitches[key];
     const noteName=pitch<0?'×':['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][pitch%12]+(Math.floor(pitch/12)-1);
-    const label=patch.family==='Other'?noteName:LABELS[part],zone=key<6?'soft':key<12?'normal':'accent',partLabel=patch.mapping.indexOf(part)+1;
+    const label=patch.family==='Other'?noteName:['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][data.openPitches[part]%12],zone=key<6?'soft':key<12?'normal':'accent',partLabel=patch.mapping.indexOf(part)+1;
     b.querySelector('span').textContent=label;
     b.title=`${zone.toUpperCase()} · ${noteName} · part ${partLabel} · key ${key+1}`;
     b.setAttribute('aria-label',`${patch.name}, ${zone}, ${noteName}, part ${partLabel}, white key ${key+1}`);
@@ -196,8 +196,8 @@ function publish(data){
   for(const [note,b] of keyControls){b.classList.toggle('lit',!!(data.keys&(1<<note)));b.classList.toggle('muted',!!(data.muted&(1<<note)));}
   for(const [button,b] of buttonControls)b.classList.toggle('lit',!!(data.buttons&(1<<button)));
   for(const {role,dial,valueLabel} of knobs){
-    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:[0,1]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?5:role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
-    dial.setAttribute('aria-disabled',globals&&role>=5&&role<=6?'true':'false');
+    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:role===5?[data.tuning,data.tuningCount-1]:[0,1]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?5:role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
+    dial.setAttribute('aria-disabled',globals&&role===6?'true':'false');
     const valueText=values[role==='master'?7:role];
     if(valueLabel.textContent!==valueText)valueLabel.textContent=valueText;
     dial.setAttribute('aria-valuetext',valueText);
@@ -205,7 +205,7 @@ function publish(data){
   }
   canvas.setAttribute('aria-label',`Firmware screen: ${style.name}, ${patch.name}, chord ${data.chords[data.selected]}, slot ${data.selected+1}, ${data.locked?'locked':'unlocked'}, ${data.active} of 14 voices, page ${data.page+1}`);
   if(data.store){try{localStorage.setItem(STORE,JSON.stringify(data.store));$('status').textContent='On · settings saved in this browser';}catch{$('status').textContent='On · browser storage unavailable';}}
-  $('diagnostics').textContent=`C application host/WASM build · 44100 Hz · AudioWorklet\nDevice clock: ${data.now} ms · attacks: ${data.attacks} · voices: ${data.active}/14 · steals: ${data.steals}\nStyle: ${style.name} (${data.mode+1}/${styles.length})\nChords: ${data.chords.map((name,i)=>`${i+1}:${name}`).join(' | ')}\nChord slot: ${data.selected+1} · assign mode: ${data.editing?'ON':'OFF'} · lock: ${data.locked?'ON':'OFF'} · tone: ${patch.name}\nMaster: ${data.volume}% · intensity: ${data.velocity}% · transpose: ${data.transpose} · shared room: ${data.room}% · mode: ${performanceNames[data.performance]} · BPM: ${data.bpm} · gate tails: ${data.gateTails?'ON':'OFF'} · humanity: ${data.humanity}% · voicing: ${data.voicing+1}/${data.voicingCount}\nLast white key: ${data.lastKey<0?'none':data.lastKey+1} · pitch: ${data.lastPitch<0?'muted/none':data.lastPitch}\nC-reported application buffers/state: ${data.stateBytes} bytes · DSP-limited samples: ${data.clips}\nScreen: 240 × 240 RGB565 from C · firmware input: 27-key bitmap\nFM-1 peripheral timing/scan codes and on-device performance unverified.`;
+  $('diagnostics').textContent=`C application host/WASM build · 44100 Hz · AudioWorklet\nDevice clock: ${data.now} ms · attacks: ${data.attacks} · voices: ${data.active}/14 · steals: ${data.steals}\nStyle: ${style.name} (${data.mode+1}/${styles.length})\nChords: ${data.chords.map((name,i)=>`${i+1}:${name}`).join(' | ')}\nChord slot: ${data.selected+1} · assign mode: ${data.editing?'ON':'OFF'} · lock: ${data.locked?'ON':'OFF'} · tone: ${patch.name}\nMaster: ${data.volume}% · intensity: ${data.velocity}% · transpose: ${data.transpose} · shared room: ${data.room}% · mode: ${performanceNames[data.performance]} · BPM: ${data.bpm} · tuning: ${data.tuningName} · gate tails: ${data.gateTails?'ON':'OFF'} · humanity: ${data.humanity}% · voicing: ${data.voicing+1}/${data.voicingCount}\nLast white key: ${data.lastKey<0?'none':data.lastKey+1} · pitch: ${data.lastPitch<0?'muted/none':data.lastPitch}\nC-reported application buffers/state: ${data.stateBytes} bytes · DSP-limited samples: ${data.clips}\nScreen: 240 × 240 RGB565 from C · firmware input: 27-key bitmap\nFM-1 peripheral timing/scan codes and on-device performance unverified.`;
 }
 $('style').onchange=e=>{send({type:'mode',index:Number(e.target.value)});e.target.blur();};
 $('previous-style').onclick=()=>send({type:'mode',index:(latest?.mode??0)-1});
