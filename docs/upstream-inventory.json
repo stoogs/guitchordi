@@ -1,0 +1,81 @@
+[
+  {
+    "repo": "charlesvestal/fm1-fomni",
+    "sha": "7e7547f384fe70b7e89cfd725b0a211bcc60db05",
+    "paths": [
+      "LICENSE",
+      "assets/fonts/Terminus-LICENSE.txt",
+      "host",
+      "host/build_host.sh",
+      "host/omni_host.c",
+      "tests/host",
+      "tests/host/emu_test.mjs",
+      "tests/host/encoder_test.c",
+      "tests/host/fastmath_test.c",
+      "tests/host/omni_test.c",
+      "tests/host/trs_test.c",
+      "tests/host/uac_test.c"
+    ]
+  },
+  {
+    "repo": "isod89/clipper-fm1",
+    "sha": "e69067211c4690f34e494b5b896e4585163dcc2b",
+    "paths": [
+      "LICENSE",
+      "LICENSES",
+      "LICENSES/Apache-2.0-msfa.txt",
+      "assets/fonts/Terminus-LICENSE.txt",
+      "firmware/src/eng_phys.c",
+      "firmware/src/phys_dsp.c",
+      "firmware/src/phys_symp.c",
+      "tests/cpu1_host.c",
+      "tests/hostsim.c",
+      "web/FUKIAI-LICENSE.txt"
+    ]
+  },
+  {
+    "repo": "isod89/sloop-fm1",
+    "sha": "4ec1ac829fd2bdf2c571ea215fb3d62477d01220",
+    "paths": [
+      "LICENSE",
+      "LICENSES",
+      "LICENSES/Apache-2.0-msfa.txt",
+      "assets/fonts/Terminus-LICENSE.txt",
+      "docs/webapp/editor/FUKIAI-LICENSE.txt",
+      "firmware/host",
+      "firmware/host/preview.c",
+      "firmware/src/eng_phys.c",
+      "firmware/src/phys_dsp.c",
+      "firmware/src/phys_symp.c",
+      "tests/cpu1_host.c",
+      "tests/hostsim.c",
+      "web/FUKIAI-LICENSE.txt"
+    ]
+  },
+  {
+    "repo": "keremimo/melodee",
+    "sha": "398ada1e09d864c12f3b778a43e45c7c2a8031b8",
+    "paths": [
+      "LICENSE",
+      "LICENSING.md",
+      "AGENTS.md",
+      "firmware/src/chord.c",
+      "firmware/src/seq.c",
+      "firmware/src/params.c"
+    ],
+    "imported": false
+  },
+  {
+    "repo": "charlesvestal/fm1-x0x",
+    "sha": "54194c54bb01e9d9b3fe9d641b3ddfa512ac04a3",
+    "paths": [
+      "web/emu/build.sh",
+      "web/emu/x0x_web.c",
+      "web/emu/worklet.js",
+      "web/emu/index.html",
+      "tests/host/emu_test.mjs",
+      "LICENSING.md"
+    ],
+    "imported": false
+  }
+]

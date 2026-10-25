@@ -1,0 +1,189 @@
+{
+  "status": "planned-not-loaded-by-runtime",
+  "default": "standard",
+  "stringOrder": "low to high",
+  "presets": [
+    {
+      "id": "standard",
+      "name": "Standard EADGBE",
+      "notes": "E2 A2 D3 G3 B3 E4",
+      "midi": [
+        40,
+        45,
+        50,
+        55,
+        59,
+        64
+      ]
+    },
+    {
+      "id": "drop-d",
+      "name": "Drop D",
+      "notes": "D2 A2 D3 G3 B3 E4",
+      "midi": [
+        38,
+        45,
+        50,
+        55,
+        59,
+        64
+      ]
+    },
+    {
+      "id": "double-drop-d",
+      "name": "Double Drop D",
+      "notes": "D2 A2 D3 G3 B3 D4",
+      "midi": [
+        38,
+        45,
+        50,
+        55,
+        59,
+        62
+      ]
+    },
+    {
+      "id": "open-d",
+      "name": "Open D / Vestapol",
+      "notes": "D2 A2 D3 F#3 A3 D4",
+      "midi": [
+        38,
+        45,
+        50,
+        54,
+        57,
+        62
+      ]
+    },
+    {
+      "id": "open-g",
+      "name": "Open G / Spanish",
+      "notes": "D2 G2 D3 G3 B3 D4",
+      "midi": [
+        38,
+        43,
+        50,
+        55,
+        59,
+        62
+      ]
+    },
+    {
+      "id": "open-e",
+      "name": "Open E",
+      "notes": "E2 B2 E3 G#3 B3 E4",
+      "midi": [
+        40,
+        47,
+        52,
+        56,
+        59,
+        64
+      ]
+    },
+    {
+      "id": "open-a",
+      "name": "Open A",
+      "notes": "E2 A2 E3 A3 C#4 E4",
+      "midi": [
+        40,
+        45,
+        52,
+        57,
+        61,
+        64
+      ]
+    },
+    {
+      "id": "dadgad",
+      "name": "DADGAD",
+      "notes": "D2 A2 D3 G3 A3 D4",
+      "midi": [
+        38,
+        45,
+        50,
+        55,
+        57,
+        62
+      ]
+    },
+    {
+      "id": "open-d-minor",
+      "name": "Open D minor",
+      "notes": "D2 A2 D3 F3 A3 D4",
+      "midi": [
+        38,
+        45,
+        50,
+        53,
+        57,
+        62
+      ]
+    },
+    {
+      "id": "open-g-minor",
+      "name": "Open G minor",
+      "notes": "D2 G2 D3 G3 Bb3 D4",
+      "midi": [
+        38,
+        43,
+        50,
+        55,
+        58,
+        62
+      ]
+    },
+    {
+      "id": "open-c",
+      "name": "Open C",
+      "notes": "C2 G2 C3 G3 C4 E4",
+      "midi": [
+        36,
+        43,
+        48,
+        55,
+        60,
+        64
+      ]
+    },
+    {
+      "id": "open-d6",
+      "name": "Open D6",
+      "notes": "D2 A2 D3 F#3 B3 D4",
+      "midi": [
+        38,
+        45,
+        50,
+        54,
+        59,
+        62
+      ]
+    },
+    {
+      "id": "half-step-down",
+      "name": "Half-step down",
+      "notes": "Eb2 Ab2 Db3 Gb3 Bb3 Eb4",
+      "midi": [
+        39,
+        44,
+        49,
+        54,
+        58,
+        63
+      ]
+    },
+    {
+      "id": "whole-step-down",
+      "name": "Whole-step down",
+      "notes": "D2 G2 C3 F3 A3 D4",
+      "midi": [
+        38,
+        43,
+        48,
+        53,
+        57,
+        62
+      ]
+    }
+  ]
+}

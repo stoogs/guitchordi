@@ -1,0 +1,17 @@
+*
+!web/
+!web/**
+!nginx.conf
+!Dockerfile
+!dsp/
+!dsp/**
+!third_party/
+!third_party/clipper-phys/
+!third_party/clipper-phys/**
+!scripts/
+!scripts/build-dsp.sh
+!firmware/
+!firmware/**
+!scripts/build-simulator.sh
+!scripts/generate-firmware-bank.py
+!nginx.simulator.conf

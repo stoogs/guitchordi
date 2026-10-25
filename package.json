@@ -1,0 +1,23 @@
+{
+  "name": "guitchordi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "serve": "python3 -m http.server 8768 --bind 127.0.0.1 --directory web",
+    "smoke": "sh scripts/smoke.sh",
+    "test:dsp": "sh scripts/check-dsp.sh",
+    "test:simulator": "sh scripts/check-simulator.sh",
+    "smoke:simulator": "sh scripts/smoke-simulator.sh",
+    "setup:fm1": "python3 scripts/setup-fm1.py",
+    "build:fm1": "python3 scripts/build-fm1.py --package",
+    "test:fm1": "sh scripts/check-fm1.sh",
+    "test:instruments": "sh scripts/check-instruments.sh",
+    "review:instruments": "node scripts/review-instruments.mjs",
+    "test:rhythm": "sh scripts/check-rhythm.sh",
+    "prepare:device": "python3 scripts/prepare-device-test.py"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "instruments": 16,
+  "distinct_audio": 16,
+  "native_wasm_samples": 2867200,
+  "max_float_difference": 0,
+  "style_instrument_contacts": 140800,
+  "peak": 0.4310898780822754,
+  "state_bytes": 163096,
+  "native_mixed_retriggers": 20000,
+  "ubsan": "passed"
+}

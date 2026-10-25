@@ -1,0 +1,7 @@
+*.pdf binary
+*.png binary
+*.ttf binary
+# Preserve Markdown hard line breaks and verbatim third-party notices.
+*.md whitespace=-blank-at-eol
+third_party/** -whitespace
+firmware/fonts/OFL.txt -whitespace

@@ -1,0 +1,56 @@
+{
+  "modes": [
+    "Freeplay",
+    "Strum",
+    "Arp"
+  ],
+  "patterns_per_auto_mode": 6,
+  "divisions": [
+    "1/1",
+    "1/1D",
+    "1/1T",
+    "1/2",
+    "1/2D",
+    "1/2T",
+    "1/4",
+    "1/4D",
+    "1/4T",
+    "1/8",
+    "1/8D",
+    "1/8T",
+    "1/16",
+    "1/16D",
+    "1/16T",
+    "1/32",
+    "1/32D",
+    "1/32T"
+  ],
+  "gate_percentages": [
+    25,
+    50,
+    75,
+    100
+  ],
+  "configuration_cases": 1080,
+  "native_wasm_samples": 409600,
+  "max_float_difference": 0,
+  "native_ubsan": "passed",
+  "timing_gate_swing_release_stop_mode_changes": "passed",
+  "storage": "v9 44 words; v8 sweep-unit and v6/v7 humanity migration",
+  "lock": "ENV 3 seconds, colour ramp and once-per-hold tested",
+  "physical_cpu_latency": "unmeasured",
+  "division_tempo_timing_cases": 54,
+  "controls": "ARP cycles Freeplay/Strum/Arp; SELECT directly adjusts 40\u2013240 BPM",
+  "gate_options": [
+    25,
+    50,
+    75,
+    100,
+    "FREE"
+  ],
+  "gate_default": "FREE, natural instrument decay",
+  "free_tail_and_stop": "passed",
+  "fx_toggle": "passed, playback preserved",
+  "sweep": "INSTANT, then 5\u2013250 ms in 5 ms steps; factory 50 ms; 51 settings verified",
+  "gate_tails": "global On/Off, soft release for percentage gates; FREE unchanged; cancellation and persistence passed"
+}

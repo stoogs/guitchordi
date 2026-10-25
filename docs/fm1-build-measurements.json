@@ -1,0 +1,59 @@
+{
+  "status": "compiled-unverified-on-device",
+  "app_bytes": 75620,
+  "app_sha256": "a8fd8e6117d7ecdb75c258995004f6ab35e2a07f93e5e225208cc1b184bdaad2",
+  "ram_data_bss_bytes": 55892,
+  "pool_bytes": 115200,
+  "loader_bytes": 6528,
+  "package": {
+    "path": "build/fm1/guitchordi-experimental.fwsc",
+    "bytes": 609684,
+    "sha256": "d183baf3dac7ee133ec9ab372b15ca5876d391b0a15cc1c35afcb61be7f5fdd1"
+  },
+  "toolchain": "20260730.1",
+  "docker_image": "debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8",
+  "physical_tested": false,
+  "limitations": [
+    "No in-app USB updater/MIDI/audio",
+    "SAVE snapshot is RAM-only; no flash persistence",
+    "Default panel map not calibrated on a device",
+    "14-voice performance and 128-frame I2S deadline unmeasured",
+    "Recovery entry and boot-loop fallback compiled but untested on hardware"
+  ],
+  "validation": {
+    "node_tests": "16/16 passed",
+    "native_host": "passed",
+    "ubsan": "passed",
+    "all_instruments": "16/16",
+    "instrument_style_contacts": 140800,
+    "native_wasm_samples": 2867200,
+    "native_wasm_max_float_difference": 0,
+    "mixed_retriggers": 20000,
+    "simulated_updater": "passed reference harness",
+    "simulated_loader": "passed",
+    "physical_device": "not tested",
+    "control_feedback": "8 control identities, 3-second expiry, bounds, unchanged ADC suppression; native and UBSan passed",
+    "intensity_sweeps": "16 patches x 5 levels, six-note sweeps finite/unclipped; bowed periodicity 0.99989",
+    "edit_reset": "SEL OK, ENV 3-second colour ramp, scope/cancel/lock passed",
+    "clean_natural_intensity": "Harp/Violin 100% waveform equals neutral x1.15 within 1e-6; no added drive",
+    "display_font": "294 chord titles fit 148px left two-thirds; enlarged 14/12px three-column voicing grid fits every label; all four header readouts fit",
+    "voicings": "294 chords x 6 distinct pitch-class-preserving shapes; 169344 instrument/part mappings passed",
+    "slot_memory": "separate slots, v5 32-word save/restore, legacy migration, lock and unchanged master passed; browser SAVE/reload checked",
+    "rhythm": "1080 configurations, defaults, all 51 sweep values, native/WASM parity, v9 migration passed",
+    "chord_guidance": "6050 candidate relationships; native/UBSan/WASM, resolutions, cache invalidation and no audio attacks passed; physical LED contrast unverified",
+    "loader_interruption": "290/290 flash operation boundaries, UBSan, loader re-entry; protected head/globals preserved"
+  },
+  "headroom": {
+    "app_slot_bytes": 581564,
+    "app_free_bytes": 511440,
+    "main_ram_budget_bytes": 98304,
+    "main_ram_free_before_stack_regions": 42412,
+    "pool_budget_bytes": 344064,
+    "pool_free_bytes": 228864,
+    "cpu": "unmeasured on FM-1",
+    "audio_half_deadline_ms": 2.9024943310657596
+  },
+  "first_flash": "not cleared: stock restore checksum mismatch, runtime USB handshake absent, device recovery unverified",
+  "restore_file_expected_sha256": "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a",
+  "restore_file_observed_sha256": "d017fb65e70aca97ee29d944470c3515a74581df5c0576bf70de917c7b2b61d5"
+}

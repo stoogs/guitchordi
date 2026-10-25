@@ -1,0 +1,15 @@
+services:
+  browser-prototype:
+    build:
+      context: .
+      target: instrument
+    ports:
+      - "127.0.0.1:8768:80"
+    restart: unless-stopped
+  firmware-simulator:
+    build:
+      context: .
+      target: simulator
+    ports:
+      - "127.0.0.1:8769:80"
+    restart: unless-stopped

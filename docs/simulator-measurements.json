@@ -1,0 +1,18 @@
+{
+  "wasm_bytes": 20272,
+  "wasm_sha256": "f3b7c990e03c1bb808b7614251369a8425d53ed05dcebd5b16c7c2b60bfcf1bf",
+  "native_wasm_reference_samples": 153600,
+  "max_float_difference": 0,
+  "reference_peak": 0.11592020094394684,
+  "framebuffer": "240x240 RGB565",
+  "main_buffer_bytes": 162672,
+  "browser": {
+    "rapid_attacks": 28,
+    "peak_active_voices": 14,
+    "steals": 14,
+    "muted_low_E": "zero attacks",
+    "hold_seconds": 5.2,
+    "browser_save_restore": "verified",
+    "console_errors": 0
+  }
+}
