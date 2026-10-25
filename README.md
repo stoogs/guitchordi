@@ -73,7 +73,7 @@ Manual smoke:
 
 `npm run setup:fm1`, `npm run build:fm1`, then `npm run test:fm1` prepare dependencies, build the actual pi32v2 app/loader/package and exercise simulated update tests. No command accesses a device. The candidate still needs physical bring-up, in-app USB update integration and flash-backed settings. [Build instructions](docs/firmware-build.md) · [Readiness](docs/device-readiness.md).
 
-Standard **EADGBE** remains the default. [Tuning presets](docs/tuning-presets.md), including Open D/G and blues/slide options, are recorded for future work.
+Standard **EADGBE** remains the default. [Fourteen tuning presets](docs/tuning-presets.md), including Drop D and Open D/G, are available through GLO K3.
 
 ## Source and project status
 
@@ -85,10 +85,26 @@ Standard **EADGBE** remains the default. [Tuning presets](docs/tuning-presets.md
 - `web/audio.mjs`, `web/buffer-worker.mjs`, `web/pluck.mjs`: preserved cached original JS backend.
 - [Progress](docs/progress.md), [upstream audit/Melodee findings](docs/upstream-audit.md), [DSP evidence](docs/dsp-feasibility.md).
 
-Clipper/SLOOP/Melodee research archives are isolated in ignored `build/research/`. The audio model is the audited MIT leaf. The hardware target also vendors a focused, attributed GPL Felucca-derived platform/loader selection; its file hashes and licence record are in [third_party/fm1-platform](third_party/fm1-platform/README.md). No upstream sequencer, instrument wrapper, fonts, icons or sample assets have been merged. Melodee's STRUM/STROKE schedules a chord's notes over time; our direct-contact instrument keeps actual key presses as the sole source of attacks. The simulator and experimental target share our instrument application. The target package compiles and passes simulated update tests; physical FM-1 operation remains unverified.
+Clipper/SLOOP/Melodee research archives are isolated in ignored `build/research/`. The audio model is the audited MIT leaf. The hardware target also vendors a focused, attributed GPL Felucca-derived platform/loader selection; its file hashes and licence record are in [third_party/fm1-platform](third_party/fm1-platform/README.md). No upstream sequencer, instrument wrapper, icons or sample assets have been merged; the display uses the separately credited OFL Noto Sans font. Melodee's STRUM/STROKE schedules a chord's notes over time; our independently written Strum/Arp scheduler supplements direct white-key playing. The simulator and experimental target share our instrument application. The target package compiles and passes simulated update tests; physical FM-1 operation remains unverified.
 
-The original extracted starter remains intact in ignored `fm-guitomnichord/` beside its original zip. Active development files are at this workspace root. Git initialization remains pending the host's Xcode licence resolution; no agreement has been accepted on your behalf.
+The original extracted starter remains intact in ignored `fm-guitomnichord/` beside its original zip. Active development files are at this workspace root. The project is published at https://github.com/stoogs/guitchordi.
 
 ## Source and licensing
 
 The combined firmware project is GPL-3.0-only; see [LICENSE](LICENSE). Third-party components retain their own notices, including the MIT string-model leaf and OFL fonts. See [platform provenance](third_party/fm1-platform/README.md). Build dependencies, firmware packages and per-device flash backups stay out of Git.
+
+
+## Credits and release testing
+
+[Full licenses, credits and component boundaries](NOTICES.md) · [Local testing and Firmware Hub submission gates](docs/hub-submission.md). The combined project is **GPL-3.0-only**, with retained MIT DSP, OFL font and Apache-2.0 SDK notices. The Docker website includes a matching source archive and a visible credits link.
+
+Guitchordi does **not** import stock, Felucca, X0X or other firmware projects,
+patterns or user samples. SAVE is currently RAM-only on the device; browser SAVE
+is browser-local. No preservation or automatic conversion of another firmware's
+flash data is promised. Export that firmware's projects and samples before any
+switch, and keep a verified recovery image and per-device backup.
+
+The current `FM-1_900` package identity is an experimental placeholder, not a
+reserved release identity. USB MIDI identity/update support, real-device install
+and exit tests, processor-emulator tests and a verified restore route must be
+completed before a Hub release. No Hub submission or release tag has been made.

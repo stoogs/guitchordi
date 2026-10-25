@@ -8,6 +8,10 @@ COPY scripts/build-dsp.sh scripts/build-simulator.sh scripts/generate-firmware-b
 COPY docs/tuning-presets.json ./docs/tuning-presets.json
 RUN sh scripts/build-dsp.sh && sh scripts/build-simulator.sh
 
+FROM dsp AS source
+COPY . /source/
+RUN python3 /source/scripts/create-source-bundle.py /source /tmp/guitchordi-source.tar.gz
+
 FROM nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 AS instrument
 COPY ./web/ /usr/share/nginx/html/
 COPY web/styles.json /usr/share/nginx/html/emu/styles.json
@@ -17,6 +21,9 @@ COPY --from=dsp /src/build/simulator.wasm /usr/share/nginx/html/emu/firmware.was
 COPY firmware/ /usr/share/nginx/html/upstream-source/application/
 COPY third_party/clipper-phys/ /usr/share/nginx/html/upstream-source/clipper-phys/
 COPY dsp/ /usr/share/nginx/html/upstream-source/adapter/
+COPY LICENSE NOTICES.md /usr/share/nginx/html/upstream-source/
+COPY web/licenses.html /usr/share/nginx/html/emu/licenses.html
+COPY --from=source /tmp/guitchordi-source.tar.gz /tmp/guitchordi-source.tar.gz.sha256 /usr/share/nginx/html/upstream-source/
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s CMD wget -q -O /dev/null http://127.0.0.1/ || exit 1

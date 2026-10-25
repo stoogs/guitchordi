@@ -19,3 +19,19 @@
 !scripts/tuning-voicings.py
 !docs/
 !docs/tuning-presets.json
+
+# Complete public source for the exact served WASM build; private/build paths stay excluded.
+!README.md
+!LICENSE
+!NOTICES.md
+!package.json
+!compose.yaml
+!.dockerignore
+!.gitignore
+!.gitattributes
+!brief.md
+!scripts/**
+!tests/
+!tests/**
+!docs/**
+!third_party/**

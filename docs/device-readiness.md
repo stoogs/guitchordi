@@ -25,3 +25,7 @@ The Guitchordi portable C instrument now has an experimental FM-1 board adapter 
 The linked image and memory sections fitting are useful evidence, but do not prove correct hardware operation. The 128-frame audio half-buffer gives roughly 2.90 ms of render budget at 44.1 kHz; physical end-to-end latency is unmeasured. The simulator remains the behavioral reference during bring-up.
 
 Standard EADGBE remains the factory default. GLO K3 selects fourteen [guitar tuning presets](tuning-presets.md), now implemented in the shared C runtime.
+
+## Hub release qualification
+
+The exact local-to-device-to-Hub gates are in [hub-submission.md](hub-submission.md). A processor emulator is now available; our first package run stops at its SPI1 BAUD restriction and is not a boot pass. Normal runtime USB MIDI identity and outgoing update handoff remain required before device/release qualification.

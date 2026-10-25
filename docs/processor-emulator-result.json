@@ -1,0 +1,12 @@
+{
+  "emulator_release": "build-67",
+  "upstream_commit": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+  "package_sha256": "9f1c546b88fc09b4f8dac294ecad07677630f526e0775c7396c5c66b70c63f97",
+  "elapsed_seconds": 0.13,
+  "status": "exited",
+  "exit_code": 1,
+  "physical_device_accessed": false,
+  "result": "not a boot pass: emulator SPI1 BAUD restriction",
+  "diagnostic": "emulator: pi32v2: SPI1 supports idle BAUD 4 only at PC 0x02001084 after 26446743 instructions",
+  "date": "2026-10-25"
+}

@@ -2,7 +2,18 @@
 
 The current browser panel runs the shared C instrument as WebAssembly. The native tests run that C code as a Linux executable in Docker. Both test the actual instrument/DSP source, but neither executes the pi32v2 firmware machine code or models the FM-1 peripherals/cycles.
 
-A normal virtual machine image cannot boot the FM-1 binary. Docker runs our x86/ARM host tools; the JieLi compiler produces pi32v2 instructions for a different processor. QEMU's [documented system targets](https://www.qemu.org/docs/master/system/targets.html) do not include JieLi/pi32v2 or an AC79/FM-1 board. The downloaded official toolchain contains compiler/linker/disassembly utilities, with no processor simulator found in its `pi32v2/bin` or `common/bin` directories. No usable supported full FM-1 processor/board emulator was found in this investigation; this is not a claim that no private or experimental implementation exists.
+A generic VM cannot boot this processor binary, but a specialized QEMU-based
+[FM-1 processor/board emulator by Simon Johansson](https://github.com/simonjohansson/fm1-emulator)
+is now available and linked by the Firmware Hub. This supersedes our earlier
+investigation, which found no usable emulator. It can accept actual uncompressed
+`.fwsc` packages on macOS ARM64 and Linux x86-64. It is a separate test tool, not
+code incorporated into Guitchordi.
+
+Our first pinned build-67 test of the actual package **did not reach a usable
+boot**: the emulator rejects the display's SPI1 BAUD change at PC `0x02001084`.
+[Recorded result](processor-emulator-result.json) and
+[reproduction / next test gates](hub-submission.md). This identifies a model
+restriction; it does not prove device success/failure or real-time headroom.
 
 What we can verify here:
 
