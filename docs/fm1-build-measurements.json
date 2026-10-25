@@ -1,14 +1,14 @@
 {
   "status": "compiled-unverified-on-device",
-  "app_bytes": 217424,
-  "app_sha256": "28eff648aa43d0f8b0a5f55ceae1ebe449052cb9b147ec5094d204fe5403797f",
-  "ram_data_bss_bytes": 55916,
+  "app_bytes": 220820,
+  "app_sha256": "d8884ad10db41902f680ebd24a10a0c2e3e8bda0b8c5c6899111a661c9a83b12",
+  "ram_data_bss_bytes": 55932,
   "pool_bytes": 115200,
   "loader_bytes": 6528,
   "package": {
     "path": "build/fm1/guitchordi-experimental.fwsc",
     "bytes": 609684,
-    "sha256": "9f1c546b88fc09b4f8dac294ecad07677630f526e0775c7396c5c66b70c63f97"
+    "sha256": "3352235b78b349623df4e8053628a43117c100ddc3e46f254ceac395084ef99a"
   },
   "toolchain": "20260730.1",
   "docker_image": "debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8",
@@ -43,13 +43,14 @@
     "chord_guidance": "6050 candidate relationships; native/UBSan/WASM, resolutions, cache invalidation and no audio attacks passed; physical LED contrast unverified",
     "loader_interruption": "885/885 flash-operation boundaries on tuning candidate before final display-label-only adjustment; UBSan loader re-entry passed",
     "tunings": "14 tunings, 294 chords, 24696 shapes / 148176 string checks; exact pitch classes, standard parity, storage and ENV lock passed",
-    "velocity_reset": "WASM attack-zone/automatic velocity, bounds, v10 migration, all defaults, cancel/confirm/input blocking and held controls passed; native reset checks passed under UBSan"
+    "velocity_reset": "WASM attack-zone/automatic velocity, bounds, v10 migration, all defaults, cancel/confirm/input blocking and held controls passed; native reset checks passed under UBSan",
+    "boot_screen": "Shared C RGB565 wave art and OFL glyphs; silent bounded 2.2s splash; animation, ADC independence and first-contact/button/encoder skip passed in WASM; native/UBSan checks passed"
   },
   "headroom": {
     "app_slot_bytes": 581564,
-    "app_free_bytes": 364140,
+    "app_free_bytes": 360744,
     "main_ram_budget_bytes": 98304,
-    "main_ram_free_before_stack_regions": 42388,
+    "main_ram_free_before_stack_regions": 42372,
     "pool_budget_bytes": 344064,
     "pool_free_bytes": 228864,
     "cpu": "unmeasured on FM-1",

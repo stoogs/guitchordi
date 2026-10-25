@@ -4,6 +4,7 @@
 #define FW_SCREEN 240
 #define FW_STORE_WORDS 46
 void fw_boot(void);
+int fw_boot_screen(void);
 void fw_keys(uint32_t mask);
 void fw_button(int button, int down);
 void fw_encoder(int role, int delta);

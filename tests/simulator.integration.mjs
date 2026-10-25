@@ -2,7 +2,17 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const module = await WebAssembly.compile(fs.readFileSync('build/simulator.wasm'));
 assert.deepEqual(WebAssembly.Module.imports(module), []);
-const e = new WebAssembly.Instance(module, {}).exports; e._initialize(); fixtureBoot();
+const e = new WebAssembly.Instance(module, {}).exports; e._initialize();
+// Splash is silent, animated, bounded in time, and never holds up a real input.
+e.fw_boot();assert.equal(e.fw_boot_screen(),1);
+const splash=new Uint16Array(e.memory.buffer,e.fw_frame(),240*240).slice();
+e.fw_master(59);assert.equal(e.fw_boot_screen(),1,'ADC calibration cannot skip the splash');
+for(let i=0;i<40;i++){const pcm=new Float32Array(e.memory.buffer,e.fw_render(128),128);assert.ok(pcm.every(x=>x===0));}
+assert.ok(new Uint16Array(e.memory.buffer,e.fw_frame(),240*240).some((x,i)=>x!==splash[i]),'wave animation advances');
+assert.equal(e.fw_attacks(),0);for(let i=0;i<720;i++)e.fw_render(128);assert.equal(e.fw_boot_screen(),0,'automatic transition after 2.2 seconds');
+for(const input of [()=>e.fw_keys(1),()=>e.fw_button(1,1),()=>e.fw_encoder(0,1)]){e.fw_boot();input();assert.equal(e.fw_boot_screen(),0,'first physical input skips splash');}
+e.fw_boot();e.fw_keys(1);assert.equal(e.fw_attacks(),1,'first playing contact still sounds immediately');
+fixtureBoot();
 function fixtureBoot(){e.fw_boot();e.fw_set_mode(0);e.fw_set_tone(0);e.fw_keys(1<<3);e.fw_keys(0);}
 const native = fs.readFileSync('build/simulator-native.f32'); let peak = 0, diff = 0;
 for (let b = 0; b < 1200; b++) {

@@ -19,6 +19,8 @@ static const uint8_t black[11] = {1,3,5,8,10,13,15,17,20,22,25};
 static uint16_t framebuffer[FW_SCREEN * FW_SCREEN] FW_LARGE;
 static uint32_t keys, buttons, attacks, store_version, settings[FW_STORE_WORDS], clock_ms, hold_started;
 static uint32_t clock_remainder;
+static int boot_visible;
+int fw_boot_screen(void) { return boot_visible && clock_ms<2200u; }
 static int slot_shapes[11];
 static int slots[11], selected, locked, lock_fired, tone, page, editing, mode;
 static int volume, velocity, room, transpose, last_key, last_pitch;
@@ -137,7 +139,7 @@ int fw_reset_menu(void) { return reset_choice + 1; }
 static const char *const reset_names[]={"CANCEL","THIS SLOT","ALL SLOTS"};
 static void control_touch(int role) { last_control=role; control_at=clock_ms; }
 int fw_control(void) { return last_control>=0 && clock_ms-control_at<3000u ? last_control : -1; }
-int fw_set_tone(int value) { if(factory_reset || reset_choice>=0 || value<0 || value>=gm_tone_count()) return 0; tone=value; control_touch(1); return 1; }
+int fw_set_tone(int value) { if(factory_reset || reset_choice>=0 || value<0 || value>=gm_tone_count()) return 0; boot_visible=0;tone=value; control_touch(1); return 1; }
 int fw_selected(void) { return selected; }
 int fw_mode(void) { return mode; }
 int fw_mode_count(void) { return FW_MODES; }
@@ -202,7 +204,7 @@ int fw_slot_voicing_count(int slot) { return slot>=0 && slot<11 ? shape_counts[s
 int fw_custom(void) { for(int i=0;i<11;i++) if(slots[i]!=mode_slots[mode][i] || slot_shapes[i]) return 1; return 0; }
 int fw_set_mode(int index) {
     if (factory_reset || reset_choice>=0 || locked || index < 0 || index >= FW_MODES) return 0;
-    rhythm_cancel(); mode = index; memcpy(slots, mode_slots[mode], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
+    boot_visible=0;rhythm_cancel(); mode = index; memcpy(slots, mode_slots[mode], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
     editing = 0; reset_choice = -1; control_touch(2);
     return 1;
 }
@@ -221,7 +223,7 @@ uint32_t fw_now(void) { return clock_ms; }
 uint32_t fw_attacks(void) { return attacks; }
 uint32_t fw_store_version(void) { return store_version; }
 uint32_t *fw_store(void) { return settings; }
-int fw_state_bytes(void) { return gm_state_bytes() + sizeof framebuffer + sizeof room_line + sizeof slots + sizeof slot_shapes + sizeof settings + sizeof auto_notes + sizeof auto_output + sizeof rhythm + sizeof hint_slots + sizeof hint_levels + sizeof hint_reasons + sizeof hint_from + sizeof hint_mode + sizeof gate_tails + sizeof humanity + sizeof tuning + sizeof rhythm_velocity + sizeof global_started + sizeof global_fired + sizeof factory_reset + sizeof reset_key_blocked; }
+int fw_state_bytes(void) { return gm_state_bytes() + sizeof framebuffer + sizeof room_line + sizeof slots + sizeof slot_shapes + sizeof settings + sizeof auto_notes + sizeof auto_output + sizeof rhythm + sizeof hint_slots + sizeof hint_levels + sizeof hint_reasons + sizeof hint_from + sizeof hint_mode + sizeof gate_tails + sizeof humanity + sizeof tuning + sizeof rhythm_velocity + sizeof global_started + sizeof global_fired + sizeof factory_reset + sizeof reset_key_blocked + sizeof boot_visible; }
 static int bound(int x, int lo, int hi) { return x < lo ? lo : x > hi ? hi : x; }
 static int string_of(int key) { return gm_part(tone,key < 12 ? key % 6 : key - 10); }
 int fw_key_pitch(int key) {
@@ -229,7 +231,7 @@ int fw_key_pitch(int key) {
     int pitch=fw_slot_pitch(selected,string_of(key));
     return pitch<0 ? -1 : gm_pitch(tone,pitch+transpose);
 }
-void fw_panic(void) { auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u<<black[i]);auto_running=queued=0; gm_reset(); memset(room_line, 0, sizeof room_line); room_cursor = 0; keys = buttons = 0; lock_fired = edit_fired = 0; reset_choice = -1; }
+void fw_panic(void) { boot_visible=0; auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u<<black[i]);auto_running=queued=0; gm_reset(); memset(room_line, 0, sizeof room_line); room_cursor = 0; keys = buttons = 0; lock_fired = edit_fired = 0; reset_choice = -1; }
 static void defaults(void) {
     fw_panic(); memcpy(slots, mode_slots[16], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
     selected = 0; locked = page = editing = transpose = 0;tone=4;mode=16;
@@ -240,11 +242,12 @@ static void defaults(void) {
 }
 void fw_boot(void) {
     defaults(); attacks=store_version=clock_ms=hold_started=clock_remainder=0;
-    global_started=0;global_fired=factory_reset=0;reset_key_blocked=0;
+    global_started=0;global_fired=factory_reset=0;reset_key_blocked=0;boot_visible=1;
     memset(settings,0,sizeof settings);
 }
 void fw_keys(uint32_t mask) {
     mask &= 0x7ffffffu;
+    if(mask)boot_visible=0;
     reset_key_blocked&=mask;
     if(factory_reset) { keys=mask;return; }
     mask&=~reset_key_blocked;
@@ -315,6 +318,7 @@ void fw_button(int button, int down) {
     int rising = down && !(buttons & bit);
     int falling = !down && (buttons & bit);
     if (down) buttons |= bit; else buttons &= ~bit;
+    if(rising)boot_visible=0;
     if(factory_reset) {
         if(rising && button==1) {
             uint32_t held_buttons=buttons, held_keys=keys;
@@ -358,7 +362,7 @@ void fw_encoder(int role, int delta) {
     if(factory_reset)return;
     delta = bound(delta, -100, 100);
     if(role<0 || role>7 || !delta) return;
-    control_touch(role);
+    boot_visible=0;control_touch(role);
     if(reset_choice>=0) { if(role==2) reset_choice=bound(reset_choice+delta,0,2); return; }
     if(role==0) { bpm=bound(bpm+delta,40,240);return; }
     if(page==3 && role>=3 && role<=6) { if(role==3)gate_tails=bound(gate_tails+delta,0,1);else if(role==4)humanity=bound(humanity+delta,0,10);else if(role==5 && !locked)tuning=bound(tuning+delta,0,FW_TUNINGS-1);else if(role==6)rhythm_velocity=bound(rhythm_velocity+delta,1,100);return; }
@@ -496,7 +500,64 @@ static void knob_value(int cx,int value,int percent,int sign,uint16_t ink) {
     if(percent) label[n++]='%'; label[n]=0;
     display_text(cx,30,label,18,ink);
 }
+// Boot art is drawn only when the LCD is requested, with no audio work or assets.
+// Integer curves avoid a sine table, floating point, heap allocation or boot delay.
+static int boot_curve(unsigned phase) {
+    unsigned t=phase&127u;
+    int bend=(int)(t*(128u-t)/16u);
+    return phase&128u?-bend:bend;
+}
+static void boot_pixel(int x,int y,uint16_t ink,int alpha) {
+    if(x<0 || x>=240 || y<0 || y>=240)return;
+    uint16_t bg=framebuffer[y*240+x];
+    int r=((ink>>11)*alpha+(bg>>11)*(16-alpha))/16;
+    int g=(((ink>>5)&63)*alpha+((bg>>5)&63)*(16-alpha))/16;
+    int b=((ink&31)*alpha+(bg&31)*(16-alpha))/16;
+    framebuffer[y*240+x]=(uint16_t)((r<<11)|(g<<5)|b);
+}
+static void boot_spark(int x,int y,uint16_t ink) {
+    rect(x-2,y,5,1,ink);rect(x,y-2,1,5,ink);
+}
+static uint16_t *boot_frame(void) {
+    const uint16_t green=0x87d3,orange=0xfcc9,red=0xf36c;
+    const uint16_t strings[6]={green,green,orange,orange,red,red};
+    rect(0,0,240,240,0x0843);
+    // Quiet horizon grid under the lower strings: an eighties record-sleeve nod.
+    for(int y=183;y<240;y++) {
+        if(y==183 || y==194 || y==211 || y==236)rect(0,y,240,1,0x10e7);
+        for(int line=-3;line<=3;line++) {
+            int x=120+line*(y-163)*2/3;
+            rect(x,y,1,1,0x10e7);
+        }
+    }
+    unsigned drift=clock_ms/80u;
+    for(int band=0;band<2;band++)for(int strand=0;strand<6;strand++) {
+        int base=(band?178:35)+strand*(band?6:5);
+        int amplitude=band?12+strand:9+strand;
+        for(int x=0;x<240;x++) {
+            int q=base*256+boot_curve((unsigned)(x+(band?64:0)+strand*9)+drift)*amplitude;
+            int y=q/256,a=(q&255)/16;
+            boot_pixel(x,y-1,strings[strand],2);
+            boot_pixel(x,y,strings[strand],16-a);
+            boot_pixel(x,y+1,strings[strand],a+2>16?16:a+2);
+        }
+    }
+    // A tiny six-string pick above the name, plus three friendly sparkle accents.
+    for(int y=0;y<17;y++) {
+        int half=y<4?7+y:11-(y-4)*11/13;
+        for(int x=-half;x<=half;x++) {
+            uint16_t color=x<-3?green:x<4?orange:red;
+            boot_pixel(120+x,77+y,color,14);
+        }
+    }
+    boot_spark(36,96,green);boot_spark(204,148,orange);boot_spark(191,83,red);
+    display_text(121,133,"GuitChordi",36,0x19c9);
+    display_text(119,131,"GuitChordi",36,0xf79c);
+    display_text(120,153,"by Stoogs",12,0xaed7);
+    return framebuffer;
+}
 uint16_t *fw_frame(void) {
+    if(fw_boot_screen())return boot_frame();
     const uint16_t mint = 0xa7d9, white_ink = 0xef7d, dim = 0x6bce, orange = 0xfcc9;
     rect(0,0,240,240,0x0842); rect(0,0,240,36,0x2166);
     int rhythm_controls=play_mode && page==0;

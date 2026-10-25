@@ -10,6 +10,13 @@ Factory defaults: **Steel Acoustic · Classic Rock · standard EADGBE · 90 BPM*
 
 **Hardware: experimental, not cleared for first flash.** See [first device test preparation](docs/first-device-test.md). Recovery/USB behaviour has not been verified on a physical unit; the current vendor restore download fails the pinned stock-V15 hash check. No device has been flashed.
 
+The boot screen shows **GuitChordi / by Stoogs**, with green/orange/red wave strings,
+a striped pick and a subtle retro grid. It runs for 2.2 seconds on a fresh boot;
+keys, buttons or encoder turns skip it immediately. The first playing key still
+sounds. The shared C artwork is used by the simulator and experimental device
+build, with no boot delay or audio-thread animation work. Reload the simulator
+and Switch on to see it again.
+
 ## Play in the FM-1 panel simulator
 
 ```sh

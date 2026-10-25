@@ -10,6 +10,9 @@ static void advance(int ms) {
 }
 static void fixture_boot(void) { fw_boot();fw_set_mode(0);fw_set_tone(0);fw_keys(1u<<3);fw_keys(0);advance(3001); }
 int main(int argc, char **argv) {
+    fw_boot();assert(fw_boot_screen());fw_frame();advance(100);fw_frame();
+    assert(fw_attacks()==0);advance(2101);assert(!fw_boot_screen());
+    fw_boot();fw_keys(1);assert(!fw_boot_screen() && fw_attacks()==1);
     fixture_boot();
     assert(fw_selected() == 1 && fw_volume() == 60 && fw_locked() == 0);
     assert(fw_control() == -1);
