@@ -119,3 +119,23 @@ Post-return user sound/control confirmation is pending. This does not prove
 worst-case processor timing, stack margin or physical recovery restoration.
 Installer log: `build/device-prep/hub-roundtrip/v15-to-guitchordi.log`.
 No firmware release or Hub submission performed.
+
+## 26 October 2026 — user-reported physical stress result after V15 entry
+
+On the unchanged final candidate
+`330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`,
+the user reports pushing jazzy chords, patterns and timing settings after the
+V15 -> GuitChordi installation. Displayed diagnostic maximum: US 2511, L 0,
+BAD 0. This is user-observed hardware telemetry, not an agent-captured trace.
+
+Against the approximately 2902 us audio-half deadline, the reported peak render
+leaves approximately 391 us (13.5%) of that deadline unused. This is a render
+time comparison, not a whole-processor utilization measurement. No late halves
+or invalid samples were reported during that session. The report supplies
+post-return functional playing evidence. Session duration, instrument-by-
+instrument coverage, stack high-water mark and exhaustive worst-case timing
+were not recorded. Recovery restoration and physical power-loss behavior remain
+untested; successful normal updates must not be presented as proof of those.
+
+No binary was changed, flashed again, released or submitted as part of recording
+this feedback.

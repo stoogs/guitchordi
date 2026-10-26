@@ -2,7 +2,8 @@
 
 Checked against https://thefirmwarehub.com/submit/ and https://thefirmwarehub.com/kb/
 on 26 October 2026. Public browser hosting is live. Firmware publication remains
-blocked on the final hardware qualification, not on website availability.
+awaiting final release review and explicit publication approval. Hardware update
+paths and a user-reported stress session are recorded in the hardware test log.
 
 ## Proposed card / message material
 
@@ -17,7 +18,8 @@ Full attribution/source: https://stoogs.github.io/guitchordi/licenses.html
 Identity: **FM-1_982**, provisional. It was absent from the fully loaded live Hub
 identity table (105 rows) on 26 October 2026. This is a current collision check,
 not a reservation; recheck before release.
-Release URL, version and tested package SHA-256: **pending qualification**.
+Release URL/version: **not published**. Tested package SHA-256:
+`330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`.
 
 GuitChordi turns the M-VAVE FM-1 into a chord and string instrument with sixteen
 synthesized sounds, fifty chord styles, editable voicings and guitar tunings.
@@ -35,8 +37,11 @@ No mail has been sent, tag pushed, firmware release published or submission made
    Check the increased output level and Steel tails by ear; local tests cannot.
 2. V15 -> exact final candidate completed on 26 October: independent starting
    identity FM-1_015, ordinary updater exit 0, reboot and independent identity
-   FM-1_982. Post-return user sound/control confirmation is pending. Entry from
-   Felucca is also proven for this exact binary. See the hardware test log.
+   FM-1_982. The user subsequently exercised jazzy chords, patterns and timing,
+   reporting peak render 2511 us, L 0, BAD 0. This leaves about 13.5% of the
+   audio-half deadline at the observed peak; it is not an exhaustive timing or
+   whole-CPU utilization proof. Entry from Felucca is also proven for this exact
+   binary. Session duration, all-patch coverage and stack margin remain unrecorded.
 3. Completed on 26 October: exact final candidate SHA-256
    `330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`
    -> official Felucca 1.6.1 -> identical candidate. Both installers exited 0,
