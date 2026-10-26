@@ -38,12 +38,12 @@ static int egg_active,play_fired;
 static uint32_t play_started,egg_step;
 static uint32_t auto_blocked;
 typedef struct { uint32_t due; int part,pitch,tone,character,gate; float strength; } auto_note;
-static auto_note auto_notes[6];
+static auto_note auto_notes[18];
 static float auto_output[GM_BLOCK];
 static const char *const tuning_pitch_names[]={"C","C#","D","EB","E","F","F#","G","AB","A","BB","B"};
 static const char *const play_names[]={"Freeplay","Strum","Arp"};
 static const char *const division_names[]={"1/1","1/1D","1/1T","1/2","1/2D","1/2T","1/4","1/4D","1/4T","1/8","1/8D","1/8T","1/16","1/16D","1/16T","1/32","1/32D","1/32T"};
-static const char *const strum_names[]={"DOWN","UP","ALTERNATE","BLOCK","BASS+CHORD","SHUFFLE"};
+static const char *const strum_names[]={"DOWN","UP","ALTERNATE","BLOCK","BASS+CHORD","SHUFFLE","RND HALF","RND 2/3","FULL CHORD","UP-DN-UP"};
 static const char *const arp_names[]={"UP","DOWN","UP-DOWN","DOWN-UP","OUTSIDE-IN","RANDOM","RND HALF","RND 2/3","FULL CHORD"};
 static void rhythm_cancel(void) { auto_running=queued=egg_active=0; gm_auto_stop(); }
 int fw_easter_egg(void) { return egg_active; }
@@ -109,9 +109,27 @@ static void rhythm_tick(void) {
     } else {
         if(p[0]==1 || (p[0]==2 && (rhythm_step&1))) for(int i=0;i<count/2;i++){int tmp=parts[i];parts[i]=parts[count-1-i];parts[count-1-i]=tmp;}
         if(p[0]==5)for(int i=count-1;i>0;i--){int j=rhythm_random()%(i+1),tmp=parts[i];parts[i]=parts[j];parts[j]=tmp;}
+        if(p[0]==6 || p[0]==7) {
+            for(int i=count-1;i>0;i--) { int j=(int)(rhythm_random()%(uint32_t)(i+1)),tmp=parts[i];parts[i]=parts[j];parts[j]=tmp; }
+            count=p[0]==6?(count+1)/2:(2*count+2)/3;
+            /* Random membership; sweep the selected strings in physical order. */
+            for(int i=1;i<count;i++)for(int j=i;j>0 && parts[j]<parts[j-1];j--) { int tmp=parts[j];parts[j]=parts[j-1];parts[j-1]=tmp; }
+        }
         // K4 requests a whole six-string stroke in 0–250 ms, independent of gate/BPM.
-        // At extreme repeat rates, fit the stroke before the next tick (fixed six-note queue).
-        uint32_t span=(uint32_t)p[3]*GM_RATE/200u;if(span>=frames)span=frames-1;
+        // A triple flourish shares a bounded eighteen-event queue and fourteen voices.
+        uint32_t span=(uint32_t)p[3]*GM_RATE/200u;
+        if(p[0]==9) { if(span<GM_RATE*30u/1000u)span=GM_RATE*30u/1000u;if(span>GM_RATE*120u/1000u)span=GM_RATE*120u/1000u; }
+        if(span>=frames)span=frames-1;
+        if(p[0]==9) {
+            queued=count*3;
+            for(int stroke=0;stroke<3;stroke++)for(int i=0;i<count;i++) {
+                int index=stroke*count+i,part=parts[stroke==1?i:count-1-i];
+                uint32_t delay=(uint32_t)index*span/(uint32_t)(count*3-1);
+                auto_notes[index]=(auto_note){sample_clock+delay,part,gm_pitch(tone,fw_slot_pitch(selected,part)+transpose),tone,velocity,(int)gate,rhythm_velocity*.01f};
+            }
+            while(queued && auto_notes[0].due==sample_clock) { rhythm_fire(&auto_notes[0]);for(int i=1;i<queued;i++)auto_notes[i-1]=auto_notes[i];queued--; }
+            rhythm_step++;return;
+        }
         uint32_t spacing=count>1?span/(uint32_t)(count-1):0;
         queued=count;
         uint32_t previous=0;
@@ -153,8 +171,10 @@ static void egg_tick(void) {
     queued=6;
     for(int i=0;i<6;i++) {
         int part=stroke<0?5-i:i;
+        float strength=rhythm_velocity*.01f*(egg_step%8u==0?1.1f:1.f);
+        if(strength>1.f)strength=1.f;
         auto_notes[i]=(auto_note){sample_clock+(uint32_t)i*GM_RATE/200u,
-            part,egg_chords[chord][part],4,50,0,(egg_step%8u==0)?.48f:.36f};
+            part,egg_chords[chord][part],4,velocity,0,strength};
     }
     egg_step++;
 }
@@ -234,8 +254,8 @@ int fw_key_brightness(int key) {
     if(key<0 || key>=27)return 0;
     if((keys&(1u<<key)))return 255;
     for(int i=0;i<11;i++)if(black[i]==key){if(i==selected)return 255;int level=fw_suggestion(i);return level==3?192:level==2?80:20;}
-    /* Home contacts of the soft, normal and accent lanes. Muted parts stay dark. */
-    for(int i=0;i<16;i+=6)if(white[i]==key && fw_slot_pitch(selected,gm_part(tone,i<12?i%6:i-10))>=0)return 80;
+    /* Lane landmarks remain visible even when that chord part is muted. */
+    for(int i=0;i<16;i+=6)if(white[i]==key)return 80;
     return 0;
 }
 int fw_voicing(void) { return slot_shapes[selected]; }
@@ -314,7 +334,7 @@ void fw_keys(uint32_t mask) {
     keys = mask;
 }
 static void save(void) {
-    settings[0] = 0x474d000cu; settings[1] = (uint32_t)selected; settings[2] = (uint32_t)tone;
+    settings[0] = 0x474d000du; settings[1] = (uint32_t)selected; settings[2] = (uint32_t)tone;
     settings[3] = (uint32_t)volume; settings[4] = (uint32_t)velocity; settings[5] = (uint32_t)room;
     settings[6] = (uint32_t)(transpose + 12); settings[7] = (uint32_t)locked;
     for (int i = 0; i < 11; i++) settings[8 + i] = (uint32_t)slots[i];
@@ -325,15 +345,16 @@ static void save(void) {
     settings[19] = (uint32_t)mode; settings[20] = 1; store_version++;
 }
 int fw_restore(void) {
-    if ((settings[0] != 0x474d0001u && settings[0] != 0x474d0002u && settings[0] != 0x474d0003u && settings[0] != 0x474d0004u && settings[0] != 0x474d0005u && settings[0] != 0x474d0006u && settings[0] != 0x474d0007u && settings[0] != 0x474d0008u && settings[0] != 0x474d0009u && settings[0] != 0x474d000au && settings[0] != 0x474d000bu && settings[0] != 0x474d000cu) || settings[1] >= 11 || settings[2] >= (settings[0] >= 0x474d0003u ? (uint32_t)gm_tone_count() : 3u) ||
+    if ((settings[0] != 0x474d0001u && settings[0] != 0x474d0002u && settings[0] != 0x474d0003u && settings[0] != 0x474d0004u && settings[0] != 0x474d0005u && settings[0] != 0x474d0006u && settings[0] != 0x474d0007u && settings[0] != 0x474d0008u && settings[0] != 0x474d0009u && settings[0] != 0x474d000au && settings[0] != 0x474d000bu && settings[0] != 0x474d000cu && settings[0] != 0x474d000du) || settings[1] >= 11 || settings[2] >= (settings[0] >= 0x474d0003u ? (uint32_t)gm_tone_count() : 3u) ||
         settings[3] > 100 || (settings[0] < 0x474d0004u && settings[4] < 10) || settings[4] > 100 || settings[5] > 100 || settings[6] > 24 || settings[7] > 1) return 0;
     if (settings[0] != 0x474d0001u && (settings[19] >= FW_MODES || settings[20] != 1)) return 0;
     for (int i = 0; i < 11; i++) if (settings[8 + i] >= FW_CHORDS) return 0;
     if(settings[0]>=0x474d0005u) for(int i=0;i<11;i++) if(settings[21+i]>=shape_counts[settings[8+i]]) return 0;
     if(settings[0]>=0x474d0006u) {
         if(settings[32]>2 || settings[33]<40 || settings[33]>240) return 0;
-        for(int i=0;i<8;i++) if(settings[34+i]>(uint32_t)(i%4==0?(i==4 && settings[0]>=0x474d000cu?8:5):i%4==1?(settings[0]==0x474d0006u?5:17):i%4==2?(settings[0]==0x474d0006u?3:4):i<4?(settings[0]>=0x474d0009u?50:10):12))return 0;
+        for(int i=0;i<8;i++) if(settings[34+i]>(uint32_t)(i%4==0?(i==4 && settings[0]>=0x474d000cu?8:i==0 && settings[0]>=0x474d000du?9:5):i%4==1?(settings[0]==0x474d0006u?5:17):i%4==2?(settings[0]==0x474d0006u?3:4):i<4?(settings[0]>=0x474d0009u?50:10):12))return 0;
     }
+    if(settings[0]>=0x474d000du && settings[34]==9 && (settings[37]<6 || settings[37]>24))return 0;
     if(settings[0]>=0x474d0008u && (settings[42]>1 || settings[43]>10))return 0;
     if(settings[0]>=0x474d000au && settings[44]>=FW_TUNINGS)return 0;
     if(settings[0]>=0x474d000bu && (settings[45]<1 || settings[45]>100))return 0;
@@ -415,7 +436,11 @@ void fw_encoder(int role, int delta) {
     if(role==0) { bpm=bound(bpm+delta,40,240);return; }
     if(page==3 && role>=3 && role<=6) { if(role==3)gate_tails=bound(gate_tails+delta,0,1);else if(role==4)humanity=bound(humanity+delta,0,10);else if(role==5 && !locked)tuning=bound(tuning+delta,0,FW_TUNINGS-1);else if(role==6)rhythm_velocity=bound(rhythm_velocity+delta,1,100);return; }
     if(play_mode && page==0 && role>=3 && role<=6) {
-        int i=role-3,*params=rhythm[play_mode==2];params[i]=bound(params[i]+delta,0,i==0?(play_mode==2?8:5):i==1?17:i==2?4:play_mode==1?50:12);return;
+        int i=role-3,*params=rhythm[play_mode==2];
+        int flourish=play_mode==1 && params[0]==9;
+        params[i]=bound(params[i]+delta,i==3 && flourish?6:0,i==0?(play_mode==2?8:9):i==1?17:i==2?4:play_mode==1?(flourish?24:50):12);
+        if(play_mode==1 && params[0]==9)params[3]=bound(params[3],6,24);
+        return;
     }
     switch (role) {
     case 0: break; // BPM handled above.
@@ -623,7 +648,9 @@ uint16_t *fw_frame(void) {
     if(rhythm_controls) {
         int *p=rhythm[play_mode==2];
         text(8,4,"1 PAT",1,mint);text(58,4,"2 DIV",1,mint);text(104,4,"3 GATE",1,mint);text(154,4,play_mode==1?"4 STRM":"4 SWNG",1,mint);
-        char pattern[4]={(char)('1'+p[0]),'/', (char)(play_mode==2?'9':'6'),0};display_text(25,30,pattern,18,white_ink);
+        char pattern[6]={(char)('1'+p[0]),'/', '9',0};
+        if(play_mode==1) { if(p[0]==9)memcpy(pattern,"10/10",6);else memcpy(pattern+2,"10",3); }
+        display_text(25,30,pattern,play_mode==1?14:18,white_ink);
         display_text(75,30,division_names[p[1]],14,white_ink);if(p[2]==4)display_text(125,30,"FREE",14,white_ink);else knob_value(125,(p[2]+1)*25,1,0,white_ink);if(play_mode==1 && !p[3])display_text(175,30,"INST",14,white_ink);else knob_value(175,p[3]*5,play_mode==2,0,white_ink);
     } else if(page==3) {
         text(8,4,"1 TAIL",1,mint);text(58,4,"2 HUM",1,mint);text(104,4,"3 TUNE",1,mint);text(154,4,"4 VEL",1,mint);

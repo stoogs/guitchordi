@@ -18,3 +18,7 @@ for(let block=0;block<5000;block++){
 }
 assert.ok(peak>.001 && e.gm_active()<=14);e.fw_panic();assert.equal(e.fw_easter_egg(),0);
 console.log('Easter egg WASM: hold/stop/mute passed; 640,000 samples match native exactly; voice cap retained');
+
+// The loop uses the user's output gain without replacing it or raising the ceiling.
+function loopAtMaster(level){e.fw_boot();e.fw_master(level);e.fw_button(10,1);render(5*44100,true);e.fw_button(10,0);const a=[];for(let i=0;i<128;i++)a.push(...new Float32Array(e.memory.buffer,e.fw_render(128),128));assert.equal(e.fw_volume(),level);return a;}
+const fullLoop=loopAtMaster(100),halfLoop=loopAtMaster(50);assert.ok(fullLoop.some(x=>Math.abs(x)>.01));for(let i=0;i<fullLoop.length;i++)assert.ok(Math.abs(fullLoop[i]-halfLoop[i]*2)<.000001);console.log('Loop respects master gain: 50% gives half the PCM amplitude of 100%; no volume override.');

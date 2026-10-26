@@ -28,3 +28,5 @@ header nav{display:flex;gap:22px;font-size:13px}header nav a:first-child{padding
 
 /* A small illuminated cap marks the first contact of each playing lane. */
 .white-key{position:relative}.white-key.lane-home:before{content:"";position:absolute;top:5px;left:28%;right:28%;height:4px;border-radius:4px;background:#f6ffef;box-shadow:0 0 7px 2px #f0ffcb99;pointer-events:none}
+
+.white-key.lane-home.muted{opacity:1;background:#9da99f}.white-key.lane-home.muted>span,.white-key.lane-home.muted>small{opacity:.45}
