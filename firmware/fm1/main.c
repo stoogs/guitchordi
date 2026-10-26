@@ -12,6 +12,7 @@
 #include "fm1_audio.h"
 #include "fm1_adc.h"
 #include "fm1_lcd_hw.h"
+#include "audio-output.h"
 #include "../app.h"
 #include "../../dsp/engine.h"
 #include "../../third_party/fm1-platform/firmware/src/libc.c"
@@ -23,7 +24,8 @@ unsigned strlen(const char *s) { unsigned n=0; while(s[n]) n++; return n; }
 #define HALF_WORDS (2u * HALF_FRAMES)
 static int32_t audio_dma[2u * HALF_WORDS] __attribute__((aligned(4)));
 static uint16_t lcd_strip[240u * 8u];
-static volatile uint32_t milliseconds, master_value = 60;
+static volatile uint32_t milliseconds, master_value;
+static volatile uint8_t audio_busy;
 // Monochrome suggestion LEDs: high continuous, medium 1/2, low 1/6 scan frames.
 static uint8_t hint_medium[FM1_NCOL],hint_low[FM1_NCOL];
 /* Default Felucca physical panel mapping; requires device verification/calibration. */
@@ -31,8 +33,10 @@ static const uint8_t button_map[14] = {2,3,4,5,6,7,8,9,10,11,12,13,0,1};
 static const uint8_t encoder_map[7] = {0,1,6,2,3,4,5};
 struct { uint32_t magic, pending, failed; } gm_bootguard __attribute__((section(".noinit")));
 /* Observable in a debugger/link map; no USB debug commands in this first slice. */
-volatile struct { uint32_t halves, max_render_us, late_halves, frames; } gm_device;
+volatile struct { uint32_t halves, max_render_us, late_halves, frames, invalid_samples; } gm_device;
 extern void isr_timer5(void), isr_alnk0(void);
+#include "identity.h"
+#include "update.h"
 extern uint32_t _data_start[], _data_end[], _data_load[], _bss_start[], _bss_end[];
 extern uint32_t _pool_start[], _pool_end[], _rt_start[], _rt_end[], _rt_load[];
 
@@ -40,6 +44,10 @@ void fm1_timer5_irq(void) {
     static uint32_t last, remainder;
     static uint8_t seeded;
     fm1_timer5_ack(); fm1_input_tick();
+    static uint8_t usb_div, usb_due;
+    if(++usb_div==5u) { usb_div=0; usb_due=1; }
+    /* Match upstream: keep the scan nested, defer USB until outside render. */
+    if(usb_due && !audio_busy) { usb_due=0; usb_poll(); }
     static uint32_t led_frame;
     if(led_frame!=fm1_in.frames) {
         led_frame=fm1_in.frames;
@@ -53,8 +61,9 @@ void fm1_timer5_irq(void) {
     remainder %= 1000u * FM1_TICKS_PER_US;
 }
 void fm1_alnk0_irq(void) {
+    audio_busy=1;
     uint8_t pending=fm1_audio_pending(); fm1_audio_ack_aux(pending);
-    if (!(pending & FM1_AUDIO_HALF)) return;
+    if (!(pending & FM1_AUDIO_HALF)) { audio_busy=0; return; }
     uint32_t half=fm1_audio_free_half(), start=fm1_ticks();
     /* Application and DSP state have one owner: the audio interrupt. Timer5 only scans inputs. */
     fw_keys(fm1_in.notes);
@@ -70,14 +79,16 @@ void fm1_alnk0_irq(void) {
     float *samples=fw_render(HALF_FRAMES);
     int32_t *out=audio_dma+half*HALF_WORDS;
     for (uint32_t i=0;i<HALF_FRAMES;i++) {
-        /* 24-bit signed samples, left-justified in each I2S word. */
-        int32_t sample=(int32_t)(samples[i] * 8388607.0f);
-        out[i*2]=out[i*2+1]=(int32_t)((uint32_t)sample << 8);
+        float value=samples?samples[i]:0;
+        if(!(value>=-1.0f && value<=1.0f))gm_device.invalid_samples++;
+        int32_t sample=gm_dac_sample(value,master_value);
+        out[i*2]=out[i*2+1]=sample;
     }
     uint32_t us=(fm1_ticks()-start)/FM1_TICKS_PER_US;
     if(us>gm_device.max_render_us) gm_device.max_render_us=us;
     gm_device.halves++; fm1_audio_ack_half();
     if(fm1_audio_free_half()!=half) gm_device.late_halves++;
+    audio_busy=0;
 }
 static void fm1_fault(const fm1_crash_t *crash) {
     (void)crash; fm1_audio_stop(); fm1_enter_uboot();
@@ -113,15 +124,23 @@ void fm1_cstart(void) {
     fm1_mailbox_clear();
     fm1_guard_enable(FM1_GUARD_STACK|FM1_GUARD_WRITE|FM1_GUARD_BUS|FM1_GUARD_PC);
     fm1_vdc14_raise(7); fm1_sysvdd_raise(15);
-    lcd_init(); fw_boot(); screen_flush();
+    lcd_init(); fw_boot(); fw_master(0); screen_flush();
+    flash_ok=FL_FAR(fl_jedec_ram)()==0x856014u;
+    usb_start();
     fm1_input_init(); fm1_adc_init();
     fm1_timer5_start(isr_timer5,4);
     fm1_audio_init(audio_dma,HALF_WORDS,isr_alnk0,3);
     fm1_guard_lock_top(); fm1_irq_enable_all();
+    /* Cleanup is explicit and guarded, after timers can service USB/watchdog. */
+    if(flash_ok) { update_quiesce(); ota_boot_cleanup(); update_resume(); }
     uint32_t frame_time=0,octave_time=0;
-    int32_t master_smooth=60*1023/100;
+    int32_t master_smooth=0;
     for(;;) {
         fm1_wdt_feed();
+        usb_retry(milliseconds);
+        update_service();
+        /* Instrument MIDI performance is not implemented; discard ordinary events. */
+        mi_r=mi_w;
         if(milliseconds>30000u) gm_bootguard.pending=gm_bootguard.failed=0;
         /* Recovery entry remains independent of application chord/lock state. */
         if((fm1_in.buttons&3u)!=3u) octave_time=milliseconds;
@@ -129,7 +148,9 @@ void fm1_cstart(void) {
         if(milliseconds-frame_time>=50u) {
             frame_time=milliseconds;
             int32_t value=fm1_adc_read(FM1_ADC_MASTER);
-            if(value>=0) { master_smooth+=(value-master_smooth)/4; master_value=(uint32_t)master_smooth*100u/1023u; }
+            master_value=gm_master_reading(value,&master_smooth);
+            fw_audio_diagnostics(gm_device.max_render_us,gm_device.late_halves,
+                                 master_value,gm_device.invalid_samples);
             uint8_t high[FM1_NCOL]={0},medium[FM1_NCOL]={0},low[FM1_NCOL]={0};
             for(uint32_t col=0;col<FM1_NCOL;col++)for(uint32_t row=1;row<5;row++) {
                 int id=FM1_KEYMAP[row][col];

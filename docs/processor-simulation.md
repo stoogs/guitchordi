@@ -29,3 +29,17 @@ What we can verify here:
 Commands: `npm test`, `npm run test:simulator`, `npm run test:instruments`, `npm run test:dsp`, `npm run build:fm1`, `npm run test:fm1`.
 
 Next hardware measurements: actual output sample rate/codec format, control mapping, worst audio render time at increasing voice counts for each patch, missed DMA halves, stack high-water marks, power/reboot behavior and update/recovery entry. The new bowed patch must be included in that load sweep. These measurements decide the safe voice budget and deployment readiness. See [device readiness](device-readiness.md).
+
+## Qualification follow-up, 25 October 2026
+
+See [local qualification](local-qualification.md): a separately labelled LCD BAUD 4 diagnostic reaches HOME with display/audio DMA running. Its first played note stops on unsupported opcode `0xff48`; this is not a playback pass. Hardware build retains upstream BAUD 0. No emulated USB-MIDI host or physical recovery result is claimed.
+
+## Research-model follow-up, 26 October 2026
+
+The unchanged hardware package now passes boot/note and 343 virtual panel actions
+in a locally patched build-67 model. The patches add missing float-branch,
+signed-pair-shift and LCD BAUD 0 support; 242 regression tests ran with zero
+failures and three skipped. These additions remain research assumptions pending
+silicon/upstream validation. USB-MIDI transport, ROM recovery and physical audio
+deadlines are untested. See [current evidence](local-qualification.md) and
+[reproduction instructions](../scripts/emulator-research/README.md).

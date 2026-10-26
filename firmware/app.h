@@ -9,6 +9,9 @@ void fw_keys(uint32_t mask);
 void fw_button(int button, int down);
 void fw_encoder(int role, int delta);
 void fw_master(int value);
+#ifdef GM_FM1
+void fw_audio_diagnostics(uint32_t max_us,uint32_t late,unsigned master,uint32_t invalid);
+#endif
 void fw_panic(void);
 float *fw_render(int frames);
 uint16_t *fw_frame(void);

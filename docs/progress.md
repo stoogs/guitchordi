@@ -1,3 +1,21 @@
+## Working physical beta — 26 October 2026
+
+The corrected quiet candidate installed through Guitchordi's outgoing updater.
+The user confirms audio and controls now behave like the emulator; maximum level
+is conservative. Keep the output ceiling for this beta checkpoint. Physical
+render/late-buffer numbers and restoration remain unmeasured. A private full
+Felucca flash backup is preserved outside Git. [Evidence](fm1-audio-incident.md).
+
+## Processor qualification follow-up — 26 October 2026
+
+The unchanged hardware candidate boots, plays a virtual note and passes 343 panel
+actions in a locally patched external processor emulator. Model regression suite:
+242 run / zero failures / three skipped; targeted follow-up: five run / zero
+failures / one skipped. Update/recovery host-model checks remain passed, including
+936 loader interruption boundaries. No device access or release occurred.
+Physical USB, verified per-device backup, recovery and audio timing remain open.
+[Current qualification and limits](local-qualification.md).
+
 ## Guitar tuning selector — 25 October 2026
 
 GLO K3 now selects all fourteen planned guitar tunings. Standard EADGBE remains the default and preserves every existing voicing. Alternate tunings use generated compact fret tables: 294 chords × six shapes per tuning, exact chord pitch classes, open strings/four-fret windows and at most four distinct stopped frets. Active tuning is displayed above the main chord; GLO also shows open-string pitch names. ENV lock blocks tuning changes; instrument/style changes preserve tuning. New attacks use the new grip; existing tails are not retuned. Snapshot v10/45 words migrates all previous saves to Standard. Tests cover 24,696 shapes / 148,176 string pitches, low Drop-D bass, open-D all-open grip and setting persistence/independence.
@@ -235,3 +253,15 @@ Strum/Arp normal keys and automatic notes now default to 80% attack. Soft/accent
 ## GuitChordi / by Stoogs boot artwork - 25 October 2026
 
 The shared C LCD renderer now draws a silent, animated 2.2-second boot screen: six green/orange/red wave strings, a tiny striped pick, stars and an eighties horizon grid. First key/button/encoder input skips it without consuming the event; master ADC updates do not skip it. Factory reset does not restart the splash. The existing OFL Noto Sans subset now includes the exact mixed-case branding and small author credit. No raster artwork or runtime font engine added. Native/UBSan and WASM regressions pass; experimental FM-1 image is 220820 bytes with 55932 bytes main RAM. Browser boot and return to Home visually verified. Hardware still unqualified.
+
+
+## 25 October — local update and recovery qualification
+
+Integrated target USB MIDI identity/OTA entry, restricted runtime writes to staging,
+verified official V15 against the existing pinned checksum, and selected provisional
+FM-1_982 consistently across app/package/loader. Added packet and actual-adapter host
+harnesses; custom/stock outgoing staging and injected faults pass, as do 936 loader
+re-entry boundaries. Processor diagnostic exposed/fixed audio vector guard restart,
+then passed 35 guest seconds idle. First note hits unsupported opcode 0xff48; octave
+recovery reaches mailbox/reset but ROM reset is unmodelled. No physical device access,
+backup, flash or release. Full evidence/review: [local qualification](local-qualification.md).

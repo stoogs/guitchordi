@@ -1,0 +1,391 @@
+{
+  "hardware-candidate-spi": {
+    "passed": false,
+    "scope": "boot-and-note",
+    "diagnostic": false,
+    "physical_tested": false,
+    "package_sha256": "30d522b0178b4446abc57ff9b31e7802017c32e9fc523daf2f1ebbd2d4a33b51",
+    "emulator_sha256": "861cdfb838b9d72eaf0ad976e33850462d7d8a285837fb6f0444f68ea77ee20d",
+    "emulator_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+    "command": [
+      "build/fm1-emulator/build-67/emulator",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "build/fm1/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "returncode": 1,
+    "stderr": "emulator: pi32v2: SPI1 supports idle BAUD 4 only at PC 0x02002024 after 26451068 instructions\n",
+    "snapshots": [],
+    "reason": "SPI1 supports idle BAUD 4 only",
+    "limitations": [
+      "No physical timing/USB/recovery proof",
+      "Diagnostic uses LCD BAUD 4; hardware candidate uses 0"
+    ],
+    "pc": "0x2002024",
+    "virtual_ns": 211608552
+  },
+  "final-idle": {
+    "passed": true,
+    "scope": "boot-idle-only",
+    "diagnostic": true,
+    "physical_tested": false,
+    "package_sha256": "3492d22d5f7c52a2e7c89a7e28a6c5817451d261ceb925e57fca8eb3a84ab6ad",
+    "emulator_sha256": "861cdfb838b9d72eaf0ad976e33850462d7d8a285837fb6f0444f68ea77ee20d",
+    "emulator_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+    "command": [
+      "build/fm1-emulator/build-67/emulator",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "build/fm1-emulator-diagnostic/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "returncode": 1,
+    "stderr": "emulator: pi32v2: requested capture at PC 0x0200144a after 4375000000 instructions\n",
+    "snapshots": [
+      {
+        "virtual_ns": 5000000000,
+        "visible": true,
+        "lcd_commands": 4639,
+        "audio_completions": 1577,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 15000000000,
+        "visible": true,
+        "lcd_commands": 14662,
+        "audio_completions": 5022,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 25000000000,
+        "visible": true,
+        "lcd_commands": 24676,
+        "audio_completions": 8468,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 34000000000,
+        "visible": true,
+        "lcd_commands": 33670,
+        "audio_completions": 11568,
+        "audio_nonzero_words": 0
+      }
+    ],
+    "reason": "requested capture",
+    "limitations": [
+      "No physical timing/USB/recovery proof",
+      "Diagnostic uses LCD BAUD 4; hardware candidate uses 0"
+    ],
+    "pc": "0x200144a",
+    "virtual_ns": 35000000000,
+    "bootguard_words": [
+      1196245575,
+      0,
+      0
+    ]
+  },
+  "final-note": {
+    "passed": false,
+    "scope": "boot-and-note",
+    "diagnostic": true,
+    "physical_tested": false,
+    "package_sha256": "3492d22d5f7c52a2e7c89a7e28a6c5817451d261ceb925e57fca8eb3a84ab6ad",
+    "emulator_sha256": "861cdfb838b9d72eaf0ad976e33850462d7d8a285837fb6f0444f68ea77ee20d",
+    "emulator_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+    "command": [
+      "build/fm1-emulator/build-67/emulator",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "build/fm1-emulator-diagnostic/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "returncode": 1,
+    "stderr": "emulator: pi32v2: unsupported instruction 0xff48 at PC 0x02006550 after 876275106 instructions\n",
+    "snapshots": [
+      {
+        "virtual_ns": 3000000000,
+        "visible": true,
+        "lcd_commands": 2641,
+        "audio_completions": 888,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 6000000000,
+        "visible": true,
+        "lcd_commands": 5638,
+        "audio_completions": 1921,
+        "audio_nonzero_words": 0
+      }
+    ],
+    "reason": "unsupported instruction 0xff48",
+    "limitations": [
+      "No physical timing/USB/recovery proof",
+      "Diagnostic uses LCD BAUD 4; hardware candidate uses 0"
+    ],
+    "pc": "0x2006550",
+    "virtual_ns": 7010200856
+  },
+  "final-recovery-request": {
+    "passed": true,
+    "scope": "recovery-request-only",
+    "diagnostic": true,
+    "physical_tested": false,
+    "package_sha256": "3492d22d5f7c52a2e7c89a7e28a6c5817451d261ceb925e57fca8eb3a84ab6ad",
+    "emulator_sha256": "861cdfb838b9d72eaf0ad976e33850462d7d8a285837fb6f0444f68ea77ee20d",
+    "emulator_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+    "command": [
+      "build/fm1-emulator/build-67/emulator",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "build/fm1-emulator-diagnostic/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "returncode": 1,
+    "stderr": "emulator: pi32v2: P33 chip reset request is unsupported at PC 0x020004aa after 878591220 instructions\n",
+    "snapshots": [],
+    "reason": "P33 chip reset request is unsupported",
+    "limitations": [
+      "No physical timing/USB/recovery proof",
+      "Diagnostic uses LCD BAUD 4; hardware candidate uses 0"
+    ],
+    "pc": "0x20004aa",
+    "virtual_ns": 7028729760,
+    "mailbox": "usb_update_mode"
+  },
+  "caveat": "No physical device tested. Original upstream model rejects hardware LCD settings and some DSP instructions. Locally patched model passes exact-candidate boot/note; model extensions remain unvalidated on silicon. ROM reset/recovery and physical USB remain open.",
+  "2026-10-26-research-hardware-note": {
+    "passed": true,
+    "scope": "boot-and-note",
+    "diagnostic": false,
+    "physical_tested": false,
+    "package_sha256": "30d522b0178b4446abc57ff9b31e7802017c32e9fc523daf2f1ebbd2d4a33b51",
+    "emulator_sha256": "6a752aa110e371f0bfe7d296e267de6d7712599ab19cf75c925a7f4baaeb4de8",
+    "emulator_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+    "emulator_label": "local-iff-sar-baud0",
+    "command": [
+      "build/fm1-emulator/decoder-research/.cache/local-build/qemu-system-pi32v2",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "build/fm1/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "returncode": 1,
+    "stderr": "qemu-system-pi32v2: pi32v2: requested capture at PC 0x020004a4 after 1250000000 instructions\n",
+    "snapshots": [
+      {
+        "virtual_ns": 3000000000,
+        "visible": true,
+        "lcd_commands": 4843,
+        "audio_completions": 930,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 6000000000,
+        "visible": true,
+        "lcd_commands": 10180,
+        "audio_completions": 1964,
+        "audio_nonzero_words": 0
+      },
+      {
+        "virtual_ns": 7500000000,
+        "visible": true,
+        "lcd_commands": 12880,
+        "audio_completions": 2481,
+        "audio_nonzero_words": 42748
+      },
+      {
+        "virtual_ns": 9000000000,
+        "visible": true,
+        "lcd_commands": 15580,
+        "audio_completions": 2997,
+        "audio_nonzero_words": 174824
+      }
+    ],
+    "reason": "requested capture",
+    "limitations": [
+      "Local research model, not upstream accepted or hardware validated",
+      "No physical USB, audio timing or ROM recovery proof",
+      "Exact hardware package used; no LCD diagnostic override"
+    ],
+    "model_patch": "scripts/emulator-research/pi32v2-compat.patch",
+    "regressions": {
+      "run": 242,
+      "skipped": 3,
+      "failures": 0
+    }
+  },
+  "2026-10-26-research-panel-stress": {
+    "passed": true,
+    "failures": [],
+    "seed": 982,
+    "firmware": "/Users/stuartblack/code/fm-guitomnichord/build/fm1/guitchordi-experimental.fwsc",
+    "firmware_sha256": "30d522b0178b4446abc57ff9b31e7802017c32e9fc523daf2f1ebbd2d4a33b51",
+    "emulator_sha256": "6a752aa110e371f0bfe7d296e267de6d7712599ab19cf75c925a7f4baaeb4de8",
+    "seconds": 20.0,
+    "boot_seconds": 3.0,
+    "hold_ms": 30.0,
+    "gap_ms": 15.0,
+    "phase_ms": 15.0,
+    "actions": 343,
+    "display_updates": 10,
+    "returncode": 1,
+    "command": [
+      "/Users/stuartblack/code/fm-guitomnichord/build/fm1-emulator/decoder-research/emulator",
+      "--qemu",
+      "-M",
+      "fm1-poc",
+      "-smp",
+      "2",
+      "-accel",
+      "tcg,thread=single",
+      "-icount",
+      "shift=3,align=off,sleep=off",
+      "-display",
+      "none",
+      "-chardev",
+      "null,id=console",
+      "-serial",
+      "none",
+      "-monitor",
+      "none",
+      "-nodefaults",
+      "-no-user-config",
+      "-kernel",
+      "/Users/stuartblack/code/fm-guitomnichord/build/fm1/guitchordi-experimental.fwsc",
+      "-append",
+      "application"
+    ],
+    "virtual_usb_host": false,
+    "physical_tested": false,
+    "emulator_label": "local-iff-sar-baud0",
+    "scope": "virtual-panel-stress",
+    "evidence_directory": "build/fm1-emulator/research-playable-stress-982",
+    "final_snapshot": {
+      "index": 12,
+      "virtual_ns": 24825000000,
+      "pc": 33582172,
+      "visible": true,
+      "lcd_commands": 39295,
+      "audio_nonzero_words": 1860028,
+      "audio_completions": 8450,
+      "leds": {
+        "0,2": 34,
+        "1,3": 156,
+        "2,2": 58,
+        "2,4": 125,
+        "3,4": 251,
+        "4,3": 125,
+        "4,4": 34,
+        "6,2": 251,
+        "6,3": 32,
+        "6,4": 32,
+        "8,3": 34,
+        "10,4": 39
+      },
+      "uart1_bytes": -1
+    },
+    "limitations": [
+      "Local model extensions are not validated against silicon",
+      "Virtual USB host disabled; no USB update or ROM recovery test",
+      "No worst-case polyphony or real-time timing proof"
+    ]
+  },
+  "2026-10-26-inconclusive-stress": [
+    {
+      "directory": "research-stress-982",
+      "passed": false,
+      "status": "aborted; no first snapshot with CDC virtual host; cause unresolved"
+    },
+    {
+      "directory": "research-panel-stress-982",
+      "passed": false,
+      "status": "aborted; 5ms presses shorter than input debounce; no audio observed"
+    }
+  ]
+}

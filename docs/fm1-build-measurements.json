@@ -1,62 +1,37 @@
 {
   "status": "compiled-unverified-on-device",
-  "app_bytes": 220820,
-  "app_sha256": "d8884ad10db41902f680ebd24a10a0c2e3e8bda0b8c5c6899111a661c9a83b12",
-  "ram_data_bss_bytes": 55932,
+  "app_bytes": 230560,
+  "app_sha256": "c11a3c15452f62a9130a99cc882afc34c6fd2d78defc1b56a80d948fe9c78867",
+  "ram_data_bss_bytes": 60376,
   "pool_bytes": 115200,
   "loader_bytes": 6528,
   "package": {
     "path": "build/fm1/guitchordi-experimental.fwsc",
     "bytes": 609684,
-    "sha256": "3352235b78b349623df4e8053628a43117c100ddc3e46f254ceac395084ef99a"
+    "sha256": "97c40e1ce3d9e96bcbd2a6bbb0ebf152ed85f4c31509dc6a5a9aa0429ec38423"
   },
   "toolchain": "20260730.1",
   "docker_image": "debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8",
   "physical_tested": false,
   "limitations": [
-    "No in-app USB updater/MIDI/audio",
+    "USB MIDI update transport integrated; enumeration/update/recovery unverified on hardware",
+    "FM-1_982 is provisional and not reserved with the Hub",
+    "No USB performance MIDI or USB audio",
     "SAVE snapshot is RAM-only; no flash persistence",
     "Default panel map not calibrated on a device",
     "14-voice performance and 128-frame I2S deadline unmeasured",
     "Recovery entry and boot-loop fallback compiled but untested on hardware"
   ],
-  "validation": {
-    "node_tests": "16/16 passed",
-    "native_host": "passed",
-    "ubsan": "passed",
-    "all_instruments": "16/16",
-    "instrument_style_contacts": 140800,
-    "native_wasm_samples": 2867200,
-    "native_wasm_max_float_difference": 0,
-    "mixed_retriggers": 20000,
-    "simulated_updater": "passed reference harness",
-    "simulated_loader": "passed",
-    "physical_device": "not tested",
-    "control_feedback": "8 control identities, 3-second expiry, bounds, unchanged ADC suppression; native and UBSan passed",
-    "intensity_sweeps": "16 patches x 5 levels, six-note sweeps finite/unclipped; bowed periodicity 0.99989",
-    "edit_reset": "SEL OK, ENV 3-second colour ramp, scope/cancel/lock passed",
-    "clean_natural_intensity": "Harp/Violin 100% waveform equals neutral x1.15 within 1e-6; no added drive",
-    "display_font": "294 chord titles fit 148px left two-thirds; enlarged 14/12px three-column voicing grid fits every label; all four header readouts fit",
-    "voicings": "294 chords x 6 distinct pitch-class-preserving shapes; 169344 instrument/part mappings passed",
-    "slot_memory": "separate slots, v5 32-word save/restore, legacy migration, lock and unchanged master passed; browser SAVE/reload checked",
-    "rhythm": "1080 configurations, 409600 exact native/WASM samples, v11 snapshot and legacy migration passed",
-    "chord_guidance": "6050 candidate relationships; native/UBSan/WASM, resolutions, cache invalidation and no audio attacks passed; physical LED contrast unverified",
-    "loader_interruption": "885/885 flash-operation boundaries on tuning candidate before final display-label-only adjustment; UBSan loader re-entry passed",
-    "tunings": "14 tunings, 294 chords, 24696 shapes / 148176 string checks; exact pitch classes, standard parity, storage and ENV lock passed",
-    "velocity_reset": "WASM attack-zone/automatic velocity, bounds, v10 migration, all defaults, cancel/confirm/input blocking and held controls passed; native reset checks passed under UBSan",
-    "boot_screen": "Shared C RGB565 wave art and OFL glyphs; silent bounded 2.2s splash; animation, ADC independence and first-contact/button/encoder skip passed in WASM; native/UBSan checks passed"
-  },
-  "headroom": {
-    "app_slot_bytes": 581564,
-    "app_free_bytes": 360744,
-    "main_ram_budget_bytes": 98304,
-    "main_ram_free_before_stack_regions": 42372,
-    "pool_budget_bytes": 344064,
-    "pool_free_bytes": 228864,
-    "cpu": "unmeasured on FM-1",
-    "audio_half_deadline_ms": 2.9024943310657596
-  },
-  "first_flash": "not cleared: stock restore checksum mismatch, runtime USB handshake absent, device recovery unverified",
-  "restore_file_expected_sha256": "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a",
-  "restore_file_observed_sha256": "d017fb65e70aca97ee29d944470c3515a74581df5c0576bf70de917c7b2b61d5"
+  "identity": "FM-1_982",
+  "loader_identity": "ota-FM-1_982",
+  "identity_reserved": false,
+  "emulator_diagnostic": false,
+  "lcd_baud": 0,
+  "audio_output": {
+    "format": "signed 24-bit value in int32 word; no extra left shift",
+    "bringup_digital_peak_limit": 524287,
+    "startup_master": 0,
+    "adc_timeout_mutes": true,
+    "hardware_audio_verified": false
+  }
 }

@@ -21,12 +21,12 @@ Outputs:
 
 - `build/fm1/guitchordi.elf`, `.map`, `.bin`: linked target and app image.
 - `build/fm1/loader/ota.bin`: attributed Felucca RAM update loader.
-- `build/fm1/guitchordi-experimental.fwsc`: development package, identity `FM-1_900`.
+- `build/fm1/guitchordi-experimental.fwsc`: development package, provisional identity `FM-1_982`.
 - `build/fm1/report.json`, `symbols.txt`, `sections.txt`, `disassembly.txt`: measured build evidence.
 
-Current measured app: **216,828 bytes**, main RAM data/BSS: **55,896 bytes**, framebuffer pool: **115,200 bytes**, loader: **6,528 bytes**, package: **609,684 bytes**. Alternate tuning shapes are compact constant fret tables in flash; no audio-time voicing search is used. These link-time sizes exclude stack usage and do not establish real-time CPU capacity. [Exact report](fm1-build-measurements.json).
+Current measured app: **230,196 bytes**, main RAM data/BSS: **60,356 bytes**, framebuffer pool: **115,200 bytes**, loader: **6,528 bytes**, package: **609,684 bytes**. Alternate tuning shapes are compact constant fret tables in flash; no audio-time voicing search is used. These link-time sizes exclude stack usage and do not establish real-time CPU capacity. [Exact report](fm1-build-measurements.json).
 
-The development identity is inherited from the reference tooling. Choose a deliberate release identity/version and verify installer matching before publication; this is not presented as a Felucca release.
+The provisional identity is defined in `firmware/fm1/identity.h` and shared by the app, package and generated loader. It is absent from the checked Hub catalogue but is not reserved; recheck and coordinate before publication.
 
 ## What is connected
 
@@ -38,7 +38,7 @@ Boot code arms the watchdog, installs exception vectors/guards and includes boot
 
 ## Deliberate first-build limits
 
-- No in-app USB updater, USB MIDI/audio or external MIDI integration. The loader is packaged, but the running instrument does not yet stage it through the normal web-installer handshake.
+- In-app USB MIDI identity/update transport is integrated and host-tested; physical enumeration/handoff remains unverified. Performance MIDI and USB audio are not implemented.
 - SAVE makes the C snapshot in RAM only. Flash-backed persistence and calibration storage are pending; LCD text explicitly says RAM only.
 - The physical button/encoder map starts from Felucca's defaults. Calibration and key/LED correspondence need the actual unit.
 - CPU load, worst render time, dropouts, stack depth, latency, codec output and fourteen-voice behavior have not been measured on FM-1. `gm_device` contains maximum render time, late-half and frame counters for bring-up instrumentation.
@@ -46,7 +46,7 @@ Boot code arms the watchdog, installs exception vectors/guards and includes boot
 
 ## Validation boundary
 
-The build checks entry address/stub, section placement/image size, RAM/pool headroom, RAM code calls, direct ROM references and linked software-double routines. The package uses all three exact reference SDK hashes. The copied Felucca updater and loader host tests run against this package with simulated flash, checking staging, CRCs, cancellation, app replacement, preserved flash head, write boundaries, idempotent reinstall and damaged/foreign-key header refusal. They do not establish physical USB/install/recovery behavior; the OTA-entry harness tests copied protocol code, which is not yet integrated into our running instrument.
+The build checks entry address/stub, section placement/image size, RAM/pool headroom, RAM code calls, direct ROM references and linked software-double routines. The package uses all three exact reference SDK hashes. The copied Felucca updater and loader host tests run against this package with simulated flash, checking staging, CRCs, cancellation, app replacement, preserved flash head, write boundaries, idempotent reinstall and damaged/foreign-key header refusal. They do not establish physical USB/install/recovery behavior; the new integration harness also tests our actual board hooks against simulated storage; the USB packet harness uses mocked registers.
 
 Shared application tests still cover all 50 styles / 550 slots / 8,800 contacts; native/WASM audio matches exactly as float32. These verify the shared application, not pi32v2 execution. Use [device readiness](device-readiness.md) for the next hardware gates. Attribution and source obligations are in [platform provenance](../third_party/fm1-platform/README.md).
 
@@ -54,4 +54,4 @@ Shared application tests still cover all 50 styles / 550 slots / 8,800 contacts;
 
 The current Guitchordi candidate includes all sixteen shared C patches and six-part mapping for every patch. [Catalogue and tests](instruments.md). Device render deadlines remain unmeasured for these patches, including the bowed excitation. The target app links without software-double routines; app image and state increase by 2,180 bytes and 112 bytes respectively versus the prior three-patch target.
 
-Before a first physical test, follow [device-test preparation](first-device-test.md). The restore-file checksum mismatch and runtime USB-handshake limitation are unresolved hardware gates.
+Before a first physical test, follow [device-test preparation](first-device-test.md). The official V15 checksum now matches. Physical USB/update/recovery validation remains required; see [current evidence](local-qualification.md).

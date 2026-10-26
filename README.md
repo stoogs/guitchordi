@@ -1,3 +1,8 @@
+> **Working FM-1 beta — 26 October 2026.** The corrected quiet build has been
+> installed and the user confirms controls and audio match the emulator. The
+> temporary output ceiling remains conservative. See [hardware evidence](docs/fm1-audio-incident.md).
+> The original first-install candidate had unsafe audio and must not be used.
+
 # Guitchordi
 
 [Print the one-page A4 controls cheatsheet](output/pdf/Guitchordi-Cheatsheet-A4.pdf) - labelled control diagram, mode chart, lock and reset shortcuts.
@@ -8,7 +13,7 @@ Independent M-VAVE FM-1 six-string instrument simulator. [brief.md](brief.md) is
 
 Factory defaults: **Steel Acoustic · Classic Rock · standard EADGBE · 90 BPM**. Strum starts at **Down · 1/8 · FREE · 50 ms**. K4 offers **INSTANT**, then 5 ms steps through 250 ms. Saved browser settings override factory defaults. [Current performance controls](docs/performance-modes.md). **GLO K3** selects fourteen [guitar tunings](docs/tuning-presets.md), with Standard EADGBE as default and the tuning shown above the chord.
 
-**Hardware: experimental, not cleared for first flash.** See [first device test preparation](docs/first-device-test.md). Recovery/USB behaviour has not been verified on a physical unit; the current vendor restore download fails the pinned stock-V15 hash check. No device has been flashed.
+**Hardware: experimental, not cleared for first flash.** See [first device test preparation](docs/first-device-test.md). Recovery/USB behaviour has not been verified on a physical unit; the official repository V15 image now passes the pinned checksum. No device has been flashed.
 
 The boot screen shows **GuitChordi / by Stoogs**, with green/orange/red wave strings,
 a striped pick and a subtle retro grid. It runs for 2.2 seconds on a fresh boot;
@@ -78,7 +83,7 @@ Manual smoke:
 
 ## Experimental device firmware
 
-`npm run setup:fm1`, `npm run build:fm1`, then `npm run test:fm1` prepare dependencies, build the actual pi32v2 app/loader/package and exercise simulated update tests. No command accesses a device. The candidate still needs physical bring-up, in-app USB update integration and flash-backed settings. [Build instructions](docs/firmware-build.md) · [Readiness](docs/device-readiness.md).
+`npm run setup:fm1`, `npm run build:fm1`, then `npm run test:fm1` prepare dependencies, build the actual pi32v2 app/loader/package and exercise simulated update tests. No command accesses a device. The candidate still needs physical bring-up, physical USB/update validation and flash-backed settings. [Build instructions](docs/firmware-build.md) · [Readiness](docs/device-readiness.md).
 
 Standard **EADGBE** remains the default. [Fourteen tuning presets](docs/tuning-presets.md), including Drop D and Open D/G, are available through GLO K3.
 
@@ -111,7 +116,7 @@ is browser-local. No preservation or automatic conversion of another firmware's
 flash data is promised. Export that firmware's projects and samples before any
 switch, and keep a verified recovery image and per-device backup.
 
-The current `FM-1_900` package identity is an experimental placeholder, not a
-reserved release identity. USB MIDI identity/update support, real-device install
-and exit tests, processor-emulator tests and a verified restore route must be
-completed before a Hub release. No Hub submission or release tag has been made.
+The current `FM-1_982` package identity is provisional and not reserved with the Hub.
+USB identity/update support is integrated and host-tested; real-device install,
+exit and recovery tests remain open. The unchanged processor candidate passes boot/note and 343 virtual actions in a
+locally patched research emulator; its added semantics are not silicon-validated. See [qualification evidence](docs/local-qualification.md). No Hub submission or release tag has been made.

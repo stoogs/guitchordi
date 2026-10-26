@@ -1,0 +1,25 @@
+{
+  "upstream_revision": "519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34",
+  "source_archive_sha256": "2bcac2a4fbf4cde34e200e9710f3eb77ae236d14fb7888fda66dd5f0eab0a76f",
+  "qemu_version": "11.1.2",
+  "qemu_sha256": "731b5681e4bb18be313231579b8efd0296c5b015fa36dc533874b639ba838016",
+  "patch_sha256": "c18a9823026b47506a566936d79bd550986a1aebe38e94069100926e83e0c3d4",
+  "status": "local research; not upstream-accepted or hardware-validated",
+  "patch": "pi32v2-compat.patch",
+  "research_binary_sha256": "6a752aa110e371f0bfe7d296e267de6d7712599ab19cf75c925a7f4baaeb4de8",
+  "regression_tests": {
+    "run": 242,
+    "skipped": 3,
+    "failed": 0
+  },
+  "followup_regression_tests": {
+    "run": 5,
+    "skipped": 1,
+    "failed": 0,
+    "modules": [
+      "test_signed_pair_local",
+      "test_stress"
+    ],
+    "includes": "signed-pair PSR preservation"
+  }
+}

@@ -1,0 +1,117 @@
+--- a/src/target/pi32v2/translate.c
++++ b/src/target/pi32v2/translate.c
+@@ -682,17 +682,19 @@
+          * right shift, given the same large-count result. Other directions
+          * and noncanonical fields remain deferred. */
+         unsigned kind = x & 255;
+-        if ((kind != 0 && kind != 2) || (pair & 1)) { goto illegal; }
++        if ((kind != 0 && kind != 2 && kind != 3) || (pair & 1)) { goto illegal; }
+         TCGv_i32 shift = read_gpr(d, (x >> 8) & 15);
+         TCGv_i64 value = tcg_temp_new_i64(), wide_shift = tcg_temp_new_i64();
+         TCGLabel *large = gen_new_label(), *end = gen_new_label();
+         tcg_gen_concat_i32_i64(value, read_gpr(d, pair), read_gpr(d, pair + 1));
+         tcg_gen_brcondi_i32(TCG_COND_GEU, shift, 64, large);
+         tcg_gen_extu_i32_i64(wide_shift, shift);
+-        if (kind) { tcg_gen_shr_i64(value, value, wide_shift); }
++        if (kind == 3) { tcg_gen_sar_i64(value, value, wide_shift); }
++        else if (kind) { tcg_gen_shr_i64(value, value, wide_shift); }
+         else { tcg_gen_shl_i64(value, value, wide_shift); }
+         tcg_gen_br(end);
+         gen_set_label(large);
++        if (kind == 3) { gen_helper_pi32v2_illegal(tcg_env, tcg_constant_i32(op)); }
+         tcg_gen_movi_i64(value, 0);
+         gen_set_label(end);
+         tcg_gen_extr_i64_i32(gpr[pair], gpr[pair + 1], value);
+@@ -1509,6 +1511,22 @@
+         next = here + 6;
+         count(d); compare_branch(d, next + (int16_t)displacement * 2, next, cond,
+                                  read_gpr(d, x >> 12), tcg_constant_i32(packed_mask(x)));
++    } else if ((op & 0xfff0) == 0xff40 &&
++               literal_condition(op & 15) != TCG_COND_NEVER &&
++               (fetch(d, here + 2) & 255) == 0x80) {
++        /* Local research: vendor -mfprev1 long IFF uses bit 7 of word 2.
++         * Finite comparisons reuse the existing measured short-IFF helper;
++         * NaN/infinity remain rejected by that helper. Firmware unchanged. */
++        uint16_t x = fetch(d, here + 2), displacement = fetch(d, here + 4);
++        static const uint8_t conditions[16] = {
++            0x80, 0x88, 0x90, 0x98, 0, 0, 0, 0,
++            0xc0, 0xc8, 0xd0, 0xd8, 0xe0, 0xe8, 0, 0
++        };
++        TCGv_i32 taken = tcg_temp_new_i32();
++        next = here + 6;
++        gen_helper_pi32v2_fcmp(taken, tcg_env, tcg_constant_i32(conditions[op & 15]),
++                              read_gpr(d, x >> 12), read_gpr(d, (x >> 8) & 15));
++        count(d); branch(d, next + (int16_t)displacement * 2, next, taken, true);
+     } else if (op == 0xff0a || op == 0xff0b || op == 0xff0d || op == 0xff40 ||
+                op == 0xff42 || op == 0xff43 || op == 0xff48 || op == 0xff49 || op == 0xff4a ||
+                op == 0xff4b || op == 0xff4c || op == 0xff4d) {
+@@ -1799,7 +1817,7 @@
+     }
+     if (op == 0xe1d8) {
+         uint16_t x = fetch(d, here + 2);
+-        return ((x & 255) != 0 && (x & 255) != 2) || ((x >> 12) & 1) ? -1 : 3u << (x >> 12);
++        return ((x & 255) != 0 && (x & 255) != 2 && (x & 255) != 3) || ((x >> 12) & 1) ? -1 : 3u << (x >> 12);
+     }
+     if (op == 0x0000 || (op & 0xffc0) == 0xea40) { return 0; }
+     return -1;
+--- a/src/hw/pi32v2/fm1-lcd.c
++++ b/src/hw/pi32v2/fm1-lcd.c
+@@ -211,7 +211,7 @@
+ static void transfer_start(FM1PocLCD *lcd, bool dma)
+ {
+     if (lcd->busy) { lcd_fail(lcd, "overlapping SPI1 transfer"); }
+-    if ((lcd->control & SPI_MODE) != SPI_MODE || lcd->baud != 4 ||
++    if ((lcd->control & SPI_MODE) != SPI_MODE || (lcd->baud != 0 && lcd->baud != 4) ||
+         !(lcd->iomap_con1 & 0x10) || (lcd->pc_out & LCD_CS)) {
+         lcd_fail(lcd, "SPI1 transfer needs routed master mode and asserted LCD CS");
+     }
+@@ -272,8 +272,8 @@
+         lcd_update_irq(lcd);
+         break;
+     case 4:
+-        if (lcd->busy || value != 4) {
+-            lcd_fail(lcd, "SPI1 supports idle BAUD 4 only");
++        if (lcd->busy || (value != 0 && value != 4)) {
++            lcd_fail(lcd, "SPI1 supports idle BAUD 0 or 4 only");
+         }
+         lcd->baud = value;
+         break;
+--- a/tests/test_pair_shift.py
++++ b/tests/test_pair_shift.py
+@@ -99,7 +99,7 @@
+                 self.assertIn("after 1 instructions", result.stderr)
+ 
+     def test_unqualified_direction_and_odd_pair_remain_rejected(self):
+-        for operand in (0x0603, 0x1600):
++        for operand in (0x0601, 0x1600):
+             with self.subTest(operand=operand):
+                 guest = Guest()
+                 guest.literal(6, 0)
+--- a/tests/stress.py
++++ b/tests/stress.py
+@@ -75,6 +75,7 @@
+     parser.add_argument("--probe-key", default="z", help="qcode held after the burst; it must sound")
+     parser.add_argument("--seed", type=int, help="random seed (saved with the run)")
+     parser.add_argument("--output", type=Path, help="capture directory (default .cache/tests/stress/<time>-<seed>)")
++    parser.add_argument("--no-usb", action="store_true", help="disable the CDC-only virtual USB host for MIDI-only firmware")
+     args = parser.parse_args()
+     for name in ("seconds", "boot_seconds", "hold_ms", "gap_ms", "phase_ms"):
+         if not math.isfinite(getattr(args, name)) or getattr(args, name) <= 0:
+@@ -113,6 +114,8 @@
+                "-chardev", "null,id=console", "-serial", "chardev:console",
+                "-monitor", "none", "-nodefaults", "-no-user-config",
+                "-kernel", str(args.firmware), "-append", "application"]
++    if args.no_usb:
++        command[command.index("-serial") + 1] = "none"
+     print(f"{len(actions)} actions over {args.seconds:g} guest seconds, seed {args.seed}. "
+           f"Evidence: {directory}", flush=True)
+     result = subprocess.run(command, cwd=ROOT, env=environment(**settings),
+@@ -147,7 +150,7 @@
+               "seconds": args.seconds, "boot_seconds": args.boot_seconds,
+               "hold_ms": args.hold_ms, "gap_ms": args.gap_ms, "phase_ms": args.phase_ms,
+               "actions": len(actions), "display_updates": updates,
+-              "returncode": result.returncode, "command": command}
++              "returncode": result.returncode, "command": command, "virtual_usb_host": not args.no_usb}
+     (directory / "stress.json").write_text(json.dumps(report, indent=2) + "\n")
+     if failures:
+         print("FAIL: " + "; ".join(failures[:5]) + f". Evidence: {directory}")

@@ -11,11 +11,11 @@ This is our preparation plan, not a submission or clearance to flash.
 | Public source and license | Repository public at https://github.com/stoogs/guitchordi; GPL-3.0-only, with retained MIT, OFL and Apache-2.0 notices. Central inventory: [NOTICES.md](../NOTICES.md). |
 | Local C/WASM behavior | Existing rhythm, instrument, tuning, reset, voice-bound and parity regressions pass. Browser is the behavior reference, not proof of processor/peripheral operation. |
 | Target package | App + Felucca-derived loader builds; package/flash simulation passes. Latest recorded candidate: [build measurements](fm1-build-measurements.json). No device has booted it. |
-| Processor/board emulator | First test of the actual `.fwsc` **stopped**, not passed: build-67 rejects an LCD SPI baud transition. [Exact evidence](processor-emulator-result.json). |
-| USB MIDI and runtime updater | **Missing in our target adapter.** Must enumerate, answer its own identity request, and accept a replacement firmware normally. A loader inside the package alone does not let the running instrument start another update. |
-| Unique identity | `FM-1_900` in `scripts/build-fm1.py` is a temporary development value. Check the live Hub catalogue and coordinate a unique identity before a release; use the same value in the package, runtime response, release notes and submission. It is not reserved now. |
+| Processor/board emulator | Hardware candidate stops at LCD baud restriction. Separate slower-LCD diagnostic boots; playing a note stops on unsupported opcode. [Current evidence](local-qualification.md). |
+| USB MIDI and runtime updater | Integrated and tested at packet/hook level against host mocks; physical enumeration, identity and outgoing update remain unverified. |
+| Unique identity | `FM-1_982` is provisional, absent from the 25 October catalogue, and shared by app/package/generated loader. Coordinate/reserve with the Hub and recheck before release. |
 | Real-device entry/exit | **Not tested.** Hub requires installing the release from V15 and from another firmware, then successfully leaving ours for another firmware. Test the user's exact starting version too (reported likely V16). |
-| Restore route | Existing vendor URL no longer matches the pinned V15 hash. Resolve a source-verified recovery image and establish this unit's recovery/backup route before writing. The Hub now links an official recovery source; inspect that actual artifact and validate its hash rather than assuming the URL is V15. |
+| Restore route | Official repository V15 now matches the pinned hash. This unit's recovery and backup route still need verification before writing. |
 | Release / submission | Neither a firmware release nor Hub submission has been made. Publishing source is not release qualification. |
 
 ## 1. Repeatable local source and package checks
@@ -81,9 +81,9 @@ record any model gaps. Emulator speed is not a measured FM-1 audio deadline.
 
 ## 3. Complete USB and recovery engineering before first flash
 
-Integrate and test USB MIDI enumeration, a distinct `FM-1_` identity response and
-the normal update request/loader handoff in `firmware/fm1/main.c`. The retained
-USB/OTA source exists but is not integrated into our running instrument.
+USB MIDI identity and update entry are integrated in `firmware/fm1/update.h`.
+Host packet and integration tests pass. Physical enumeration and handoff remain
+required; [current evidence and independent comparison](local-qualification.md).
 Prove that update entry quiesces audio safely and preserves the protected flash
 head/storage boundaries. Repeat package/loader fault tests on the exact candidate.
 The standard outgoing update path is a required feature, not replaced by an
@@ -91,8 +91,7 @@ emergency recovery shortcut.
 
 Follow [first-device-test.md](first-device-test.md) to establish the actual unit's
 revision/current firmware, exported projects/samples, verified stock recovery file
-and per-device backup, plus an independently verified recovery route. Existing
-preparation scripts only stage/check files; they do not access a device. Their
+and per-device backup, plus an independently verified recovery route. Preparation scripts only stage/check files; they do not access a device. Their
 hash or chip-ID refusal remains a stop condition. No no-brick guarantee follows
 from local software checks.
 

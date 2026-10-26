@@ -64,3 +64,30 @@ upstream icon atlas are used. The printable PDFs currently embed subsets of the
 host's Arial fonts through ReportLab; the font binaries are not source dependencies
 of the instrument, are not claimed to be OFL/MIT/GPL, and are not vendored in this
 repository. PDF rebuilds require those locally installed document fonts.
+
+### Guitchordi USB/update integration (25 October 2026)
+
+`firmware/fm1/update.h` adapts the hookup sequence from the pinned X0X
+`firmware/src/x0x.c` and `firmware/src/app/main_fm1.c`, retaining Felucca/X0X
+attribution and GPL-3.0-only. The original vendored files stay byte-identical.
+`scripts/generate-fm1-usb.py` generates a copy with only the manufacturer/product
+USB descriptors and include path changed. The target builder copies the platform
+to an ignored build directory and changes only the loader's identity string.
+The build scripts, identity header and retained source are corresponding source
+for those generated derivatives. No new upstream DSP, assets or samples enter.
+
+The updater integration host harness derives from the retained GPL updater test
+and replaces its hardware hooks with our actual adapter plus explicit host mocks.
+The processor emulator and downloaded research tests remain external tools under
+`build/`; they are not imported into or distributed with this firmware.
+
+### External emulator research tools (26 October 2026)
+
+`scripts/emulator-research/` contains local GPL-2.0-or-later patches and test
+additions for Simon Johansson's GPL/QEMU-based FM-1 emulator at
+`519a13b879d744f5c05bfe3c4e5d4e04d8d4ae34`. The patch adapts that project's
+`translate.c`, `fm1-lcd.c` and one test expectation; upstream authorship and license
+remain applicable. These run as a separate development tool and are not linked
+into the Guitchordi firmware or browser simulator. The full emulator, QEMU sources
+and compiled research binary remain in ignored local build directories. The
+included README records source pins, hashes, build instructions and limitations.

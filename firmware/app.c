@@ -556,6 +556,12 @@ static uint16_t *boot_frame(void) {
     display_text(120,153,"by Stoogs",12,0xaed7);
     return framebuffer;
 }
+#ifdef GM_FM1
+static uint32_t hw_audio_us,hw_audio_late,hw_audio_master,hw_audio_invalid;
+void fw_audio_diagnostics(uint32_t us,uint32_t late,unsigned master,uint32_t invalid) {
+    hw_audio_us=us;hw_audio_late=late;hw_audio_master=master;hw_audio_invalid=invalid;
+}
+#endif
 uint16_t *fw_frame(void) {
     if(fw_boot_screen())return boot_frame();
     const uint16_t mint = 0xa7d9, white_ink = 0xef7d, dim = 0x6bce, orange = 0xfcc9;
@@ -673,5 +679,14 @@ uint16_t *fw_frame(void) {
         display_text(x+48,y+12,name,size,slot==selected?orange:hint_ink);
     }
     text(164,224,"NEXT",1,dim);rect(195,225,5,5,0x9f16);rect(206,225,5,5,0xfda9);rect(217,225,5,5,0xeaaa);
+#ifdef GM_FM1
+    /* Temporary bring-up evidence: peak render vs 2902 us half deadline, late
+     * halves, physical master and invalid samples. No hardware timing inference
+     * from the browser or processor model. */
+    text(3,233,"US",1,dim);number(18,233,(int)hw_audio_us,1,hw_audio_us>2902?0xf986:mint);
+    text(63,233,"L",1,dim);number(72,233,(int)hw_audio_late,1,hw_audio_late?0xf986:mint);
+    text(117,233,"VOL",1,dim);number(139,233,(int)hw_audio_master,1,mint);
+    text(174,233,"BAD",1,dim);number(197,233,(int)hw_audio_invalid,1,hw_audio_invalid?0xf986:mint);
+#endif
     return framebuffer;
 }
