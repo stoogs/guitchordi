@@ -1,7 +1,10 @@
-> **Working FM-1 beta — 26 October 2026.** The corrected quiet build has been
-> installed and the user confirms controls and audio match the emulator. The
-> temporary output ceiling remains conservative. See [hardware evidence](docs/fm1-audio-incident.md).
-> The original first-install candidate had unsafe audio and must not be used.
+> **Working FM-1 beta — 26 October 2026.** The final candidate has been installed
+> from stock V15 and Felucca 1.6.1, and has successfully switched to Felucca and
+> back. User-reported stress telemetry: peak render 2511 µs, late buffers 0,
+> invalid samples 0. [Hardware evidence](docs/hardware-test-log.md) ·
+> [Prepared beta release and limitations](docs/release-v0.1.0-beta.1.md).
+> Only the hash-pinned final candidate is proposed for release; the original
+> first-install candidate had unsafe audio and must not be used.
 
 [Project website source](site/index.html) · [GitHub Pages build and publishing guide](docs/website.md)
 
@@ -11,13 +14,13 @@
 
 Independent M-VAVE FM-1 six-string instrument simulator. [brief.md](brief.md) is the project brief.
 
-[Illustrated player manual](http://localhost:8769/manual/) · [Printable PDF](output/pdf/Guitchordi-Manual.pdf)
+[Illustrated player manual](https://stoogs.github.io/guitchordi/manual/) · [Printable PDF](output/pdf/Guitchordi-Manual.pdf)
 
 Factory defaults: **Nylon Acoustic · Classic Rock · standard EADGBE · 90 BPM · 60% intensity**, starting in **Strum mode**. Strum starts at **Down · 1/8 · FREE · 50 ms**. K4 offers **INSTANT**, then 5 ms steps through 250 ms. Saved browser settings override factory defaults. [Current performance controls](docs/performance-modes.md). **GLO K3** selects fourteen [guitar tunings](docs/tuning-presets.md), with Standard EADGBE as default and the tuning shown above the chord.
 
-**Hardware: experimental, not cleared for first flash.** See [first device test preparation](docs/first-device-test.md). Recovery/USB behaviour has not been verified on a physical unit; the official repository V15 image now passes the pinned checksum. No device has been flashed.
+**Hardware: tested beta on one FM-1.** Ordinary entry from V15 and Felucca, outgoing updates, USB identity and playing have been demonstrated. Recovery USB enumeration and a full-flash backup were verified; physical interrupted-write resume and backup restoration remain untested. [Current evidence](docs/hardware-test-log.md).
 
-The boot screen shows **GuitChordi / by Stoogs**, with green/orange/red wave strings,
+The boot screen shows **GuitChordi**, with green/orange/red wave strings,
 a striped pick and a subtle retro grid. It runs for 2.2 seconds on a fresh boot;
 keys, buttons or encoder turns skip it immediately. The first playing key still
 sounds. The shared C artwork is used by the simulator and experimental device
@@ -33,7 +36,7 @@ npm run smoke:simulator
 npm run test:simulator
 ```
 
-The new **Play in browser** simulator has an FM-1-style panel, working screen, knobs, keys and lights. Chords, lock, settings, screen pixels and audio execute in the shared C application compiled to WASM. Hold ENV for three seconds to lock a chord; the padlock closes on the LCD/status strip. The top-right Visuals toggle enables optional note-reactive instrument art and remembers your preference. These effects run only in the browser UI. Drag knobs or use their −/+ buttons; SAVE stores settings in this browser. This is the application host build. An experimental FM-1 target adapter now builds a `.fwsc` package; hardware boot/performance and recovery remain unverified. [Simulator controls, build and evidence](docs/firmware-simulator.md).
+The new **Play in browser** simulator has an FM-1-style panel, working screen, knobs, keys and lights. Chords, lock, settings, screen pixels and audio execute in the shared C application compiled to WASM. Hold ENV for three seconds to lock a chord; the padlock closes on the LCD/status strip. The top-right Visuals toggle enables optional note-reactive instrument art and remembers your preference. These effects run only in the browser UI. Drag knobs or use their −/+ buttons; SAVE stores settings in this browser. This is the application host build. An experimental FM-1 target adapter now builds a `.fwsc` package; normal hardware playing/update paths are tested; recovery restoration remains untested. [Simulator controls, build and evidence](docs/firmware-simulator.md).
 
 The simulator now has **16 instruments**: the original Wood/Wire/Glow, eight additional guitars, harp, bowed violin, pizzicato cello, bass and dulcimer. Choose INSTRUMENT or turn ALGORITHM. All share fourteen voice slots; all patches expose six chord parts with adapted key labels and register. [Instrument catalogue](docs/instruments.md) · [Processor simulation findings](docs/processor-simulation.md).
 
@@ -85,7 +88,7 @@ Manual smoke:
 
 ## Experimental device firmware
 
-`npm run setup:fm1`, `npm run build:fm1`, then `npm run test:fm1` prepare dependencies, build the actual pi32v2 app/loader/package and exercise simulated update tests. No command accesses a device. The candidate still needs physical bring-up, physical USB/update validation and flash-backed settings. [Build instructions](docs/firmware-build.md) · [Readiness](docs/device-readiness.md).
+`npm run setup:fm1`, `npm run build:fm1`, then `npm run test:fm1` prepare dependencies, build the actual pi32v2 app/loader/package and exercise simulated update tests. No command accesses a device. The current candidate has physical playing and ordinary update evidence; flash-backed settings are not implemented. [Build instructions](docs/firmware-build.md) · [Readiness](docs/device-readiness.md).
 
 Standard **EADGBE** remains the default. [Fourteen tuning presets](docs/tuning-presets.md), including Drop D and Open D/G, are available through GLO K3.
 
@@ -99,7 +102,7 @@ Standard **EADGBE** remains the default. [Fourteen tuning presets](docs/tuning-p
 - `web/audio.mjs`, `web/buffer-worker.mjs`, `web/pluck.mjs`: preserved cached original JS backend.
 - [Progress](docs/progress.md), [upstream audit/Melodee findings](docs/upstream-audit.md), [DSP evidence](docs/dsp-feasibility.md).
 
-Clipper/SLOOP/Melodee research archives are isolated in ignored `build/research/`. The audio model is the audited MIT leaf. The hardware target also vendors a focused, attributed GPL Felucca-derived platform/loader selection; its file hashes and licence record are in [third_party/fm1-platform](third_party/fm1-platform/README.md). No upstream sequencer, instrument wrapper, icons or sample assets have been merged; the display uses the separately credited OFL Noto Sans font. Melodee's STRUM/STROKE schedules a chord's notes over time; our independently written Strum/Arp scheduler supplements direct white-key playing. The simulator and experimental target share our instrument application. The target package compiles and passes simulated update tests; physical FM-1 operation remains unverified.
+Clipper/SLOOP/Melodee research archives are isolated in ignored `build/research/`. The audio model is the audited MIT leaf. The hardware target also vendors a focused, attributed GPL Felucca-derived platform/loader selection; its file hashes and licence record are in [third_party/fm1-platform](third_party/fm1-platform/README.md). No upstream sequencer, instrument wrapper, icons or sample assets have been merged; the display uses the separately credited OFL Noto Sans font. Melodee's STRUM/STROKE schedules a chord's notes over time; our independently written Strum/Arp scheduler supplements direct white-key playing. The simulator and experimental target share our instrument application. The target package compiles and passes simulated update tests; physical FM-1 operation is recorded in the hardware test log.
 
 The original extracted starter remains intact in ignored `fm-guitomnichord/` beside its original zip. Active development files are at this workspace root. The project is published at https://github.com/stoogs/guitchordi.
 
@@ -119,6 +122,6 @@ flash data is promised. Export that firmware's projects and samples before any
 switch, and keep a verified recovery image and per-device backup.
 
 The current `FM-1_982` package identity is provisional and not reserved with the Hub.
-USB identity/update support is integrated and host-tested; real-device install,
-exit and recovery tests remain open. The unchanged processor candidate passes boot/note and 343 virtual actions in a
+USB identity, real-device entry from V15/Felucca and exit to Felucca are tested.
+Physical interrupted-update resume and full backup restoration remain open. The unchanged processor candidate passes boot/note and 343 virtual actions in a
 locally patched research emulator; its added semantics are not silicon-validated. See [qualification evidence](docs/local-qualification.md). No Hub submission or release tag has been made.

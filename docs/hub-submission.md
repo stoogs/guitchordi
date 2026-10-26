@@ -6,13 +6,16 @@ This is our preparation plan, not a submission or clearance to flash.
 
 ## 26 October hardware and website checkpoint
 
-The corrected quiet beta is user-confirmed working on the developer’s FM-1.
-Entry from Felucca 1.6.1, identity response, and outgoing Guitchordi updates have
-completed. Recovery enumeration and a full private backup were verified from
-Felucca. Entry from V15 and restoration to another firmware remain untested;
-worst-case audio timing also remains open. The LED update has installed, with
-physical brightness feedback pending. No firmware release or Hub submission was
-published. The [project website and browser demo](https://stoogs.github.io/guitchordi/) are live on GitHub Pages. The current [launch packet](hub-launch-draft.md) records remaining gates and draft submission links. The older assessment below is retained as qualification history.
+The exact final candidate has physical entry evidence from V15 and Felucca, an
+outgoing switch to Felucca and return, and user-reported dense-playing telemetry
+of peak render 2511 us, L 0, BAD 0. See the [hardware test log](hardware-test-log.md)
+and [prepared beta release](release-v0.1.0-beta.1.md). These are one-unit results,
+not exhaustive timing or recovery proof.
+
+The Hub KB checked on 26 October also asks for a physical interrupted-update /
+resume test. This remains unperformed; local fault-injection tests are not an
+alternative physical result. No release or submission has been published.
+The earlier assessment below is retained as history.
 
 ## Earlier position
 

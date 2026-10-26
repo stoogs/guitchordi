@@ -17,8 +17,13 @@ Licence: GPL-3.0-only, with MIT DSP, OFL fonts and Apache-2.0 platform notices r
 Full attribution/source: https://stoogs.github.io/guitchordi/licenses.html
 Identity: **FM-1_982**, provisional. It was absent from the fully loaded live Hub
 identity table (105 rows) on 26 October 2026. This is a current collision check,
-not a reservation; recheck before release.
-Release URL/version: **not published**. Tested package SHA-256:
+not a reservation; recheck before release. Rechecked against all 105 actual
+`product` identities in the catalogue updated 26 October 2026, 21:01 UTC: no
+FM-1_982 match. Broad installer `ident` regular expressions are not ownership
+reservations and were not used as actual product identities.
+Proposed version: **v0.1.0-beta.1**, not published.
+[Release notes](release-v0.1.0-beta.1.md) · [Unsent submission message](hub-submission-message.md).
+Release URL: **not published**. Tested package SHA-256:
 `330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`.
 
 GuitChordi turns the M-VAVE FM-1 into a chord and string instrument with sixteen
@@ -58,3 +63,18 @@ The Hub requires real-device entry from V15 and another firmware, plus an outgoi
 update. It does not test third-party firmware. Optional shared-workflow signing is
 separate from qualification; do not add an auto-release workflow before its build
 has been verified and release is approved.
+
+## Additional KB requirement found during final review
+
+The KB checked again on 26 October explicitly asks for unplug-during-writing /
+resume on real hardware. That test remains unperformed. Existing local
+interruption simulation and ordinary round trips must not be labelled as the
+physical test. Do not start it without specific approval. Before claiming full
+Hub qualification, perform a separately reviewed/approved test or ask the Hub
+maintainer whether beta listing can proceed with this disclosed gap.
+
+The local release folder is `build/releases/v0.1.0-beta.1/`. It contains only a
+renamed copy of the tested package, complete source archive, full notices, release
+notes, qualification metadata and checksums. Preparation does not publish a tag,
+create a GitHub release or send a message. The source archive is bound to the
+recorded commit; only documentation changed since the tested application commit.

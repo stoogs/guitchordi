@@ -1,6 +1,8 @@
-# First FM-1 device test: preparation, not clearance to flash
+# First FM-1 device test — historical preparation
 
-**Status: NOT CLEARED FOR FIRST FLASH.** No physical FM-1 has run this candidate. Passing host tests cannot guarantee that it will not leave a device unbootable. No device discovery, backup or flash operation has been performed by the preparation scripts.
+**Historical document: superseded by the [hardware test log](hardware-test-log.md) and [beta release record](release-v0.1.0-beta.1.md). The statements below describe the initial preparation, not current hardware status.**
+
+**Initial status: NOT CLEARED FOR FIRST FLASH.** No physical FM-1 has run this candidate. Passing host tests cannot guarantee that it will not leave a device unbootable. No device discovery, backup or flash operation has been performed by the preparation scripts.
 
 ## What is prepared and blocked
 
