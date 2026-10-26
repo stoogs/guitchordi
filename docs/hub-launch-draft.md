@@ -14,7 +14,9 @@ A4 controls: https://stoogs.github.io/guitchordi/manual/Guitchordi-Cheatsheet-A4
 240x240 screen: https://stoogs.github.io/guitchordi/assets/boot-screen.png
 Licence: GPL-3.0-only, with MIT DSP, OFL fonts and Apache-2.0 platform notices retained.
 Full attribution/source: https://stoogs.github.io/guitchordi/licenses.html
-Identity: **FM-1_982**, provisional; confirm unique in the live Hub catalogue before release.
+Identity: **FM-1_982**, provisional. It was absent from the fully loaded live Hub
+identity table (105 rows) on 26 October 2026. This is a current collision check,
+not a reservation; recheck before release.
 Release URL, version and tested package SHA-256: **pending qualification**.
 
 GuitChordi turns the M-VAVE FM-1 into a chord and string instrument with sixteen

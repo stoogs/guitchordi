@@ -42,3 +42,8 @@ SHA-256: `78ff59f8c4efb20eff96e930a2a571dd0fa4bae5618b3677a992765116a4eb9b`.
 App 231416 B; data/BSS 60384 B; framebuffer pool 115200 B (RAM unchanged).
 Not flashed. No public firmware release or Hub submission.
 See [the launch packet](hub-launch-draft.md) for the remaining hardware gates.
+
+Pages run [40392420444](https://github.com/stoogs/guitchordi/actions/runs/40392420444)
+succeeded for commit `50bb7fa3c6db5c137e913a3227c137d81853241f`. Public-demo QA
+confirmed all three lane markers, the two-thirds K1 label/range and an isolated
+four-voice chord attack. Local preview stopped after verification.
