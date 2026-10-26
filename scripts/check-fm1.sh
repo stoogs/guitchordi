@@ -4,7 +4,7 @@ root=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 cd "$root"
 docker run --rm -v "$root:/src" -w /src \
   emscripten/emsdk:4.0.17@sha256:10ee8f470c016ddb23d0f04d45bed7b4c3e896f88b135976bbc80751bc7f7825 \
-  bash -lc 'cc -O2 -fsanitize=undefined,float-cast-overflow -fno-sanitize-recover=all tests/fm1-audio-output-test.c -o build/fm1/audio-output-test && build/fm1/audio-output-test'
+  bash -lc 'cc -O2 -fsanitize=undefined,float-cast-overflow -fno-sanitize-recover=all tests/fm1-audio-output-test.c -o build/fm1/audio-output-test && build/fm1/audio-output-test && cc -O2 -fsanitize=undefined -fno-sanitize-recover=all tests/fm1-led-levels-test.c -o build/fm1/led-levels-test && build/fm1/led-levels-test'
 python3 - <<'PY'
 from pathlib import Path
 import sys, json, hashlib

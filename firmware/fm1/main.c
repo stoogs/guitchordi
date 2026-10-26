@@ -13,6 +13,7 @@
 #include "fm1_adc.h"
 #include "fm1_lcd_hw.h"
 #include "audio-output.h"
+#include "led-levels.h"
 #include "../app.h"
 #include "../../dsp/engine.h"
 #include "../../third_party/fm1-platform/firmware/src/libc.c"
@@ -26,8 +27,8 @@ static int32_t audio_dma[2u * HALF_WORDS] __attribute__((aligned(4)));
 static uint16_t lcd_strip[240u * 8u];
 static volatile uint32_t milliseconds, master_value;
 static volatile uint8_t audio_busy;
-// Monochrome suggestion LEDs: high continuous, medium 1/2, low 1/6 scan frames.
-static uint8_t hint_medium[FM1_NCOL],hint_low[FM1_NCOL];
+// One brightness scheduler for recommendation keys and idle function buttons.
+static uint8_t led_full[FM1_NCOL],led_medium[FM1_NCOL],led_faint[FM1_NCOL];
 /* Default Felucca physical panel mapping; requires device verification/calibration. */
 static const uint8_t button_map[14] = {2,3,4,5,6,7,8,9,10,11,12,13,0,1};
 static const uint8_t encoder_map[7] = {0,1,6,2,3,4,5};
@@ -49,10 +50,12 @@ void fm1_timer5_irq(void) {
     /* Match upstream: keep the scan nested, defer USB until outside render. */
     if(usb_due && !audio_busy) { usb_due=0; usb_poll(); }
     static uint32_t led_frame;
+    static unsigned led_phase;
     if(led_frame!=fm1_in.frames) {
         led_frame=fm1_in.frames;
+        if(++led_phase==GM_LED_PHASES)led_phase=0;
         for(uint32_t col=0;col<FM1_NCOL;col++)
-            fm1_led_dim[col]=hint_medium[col] | (led_frame%3u==0?hint_low[col]:0);
+            fm1_led[col]=gm_led_mask(led_phase,led_full[col],led_medium[col],led_faint[col]);
     }
     uint32_t now = fm1_ticks();
     if(!seeded) { last=now; seeded=1; }
@@ -152,22 +155,28 @@ void fm1_cstart(void) {
             fw_audio_diagnostics(gm_device.max_render_us,gm_device.late_halves,
                                  master_value,gm_device.invalid_samples);
             uint8_t high[FM1_NCOL]={0},medium[FM1_NCOL]={0},low[FM1_NCOL]={0};
+            uint32_t active=fw_buttons(),physical_buttons=0;
+            for(uint32_t role=0;role<14;role++)
+                if(active&(1u<<role))physical_buttons|=1u<<button_map[role];
             for(uint32_t col=0;col<FM1_NCOL;col++)for(uint32_t row=1;row<5;row++) {
                 int id=FM1_KEYMAP[row][col];
-                if(id<14)continue;
-                int brightness=fw_key_brightness(id-14);uint8_t bit=(uint8_t)(1u<<row);
+                if(id<0)continue;
+                uint8_t bit=(uint8_t)(1u<<row);
+                if(id<14) {
+                    if(physical_buttons&(1u<<id))high[col]|=bit;
+                    else low[col]|=bit; // Find every function button in the dark.
+                    continue;
+                }
+                int brightness=fw_key_brightness(id-14);
                 if(brightness>=192)high[col]|=bit;
                 else if(brightness>=80)medium[col]|=bit;
                 else if(brightness)low[col]|=bit;
             }
             fm1_irq_off();
             for(uint32_t col=0;col<FM1_NCOL;col++) {
-                // Preserve button LEDs; only replace physical note-key row bits.
-                uint8_t note_bits=0;
-                for(uint32_t row=1;row<5;row++)if(FM1_KEYMAP[row][col]>=14)note_bits|=(uint8_t)(1u<<row);
-                fm1_led[col]=(fm1_led[col]&~note_bits)|high[col];hint_medium[col]=medium[col];hint_low[col]=low[col];
+                led_full[col]=high[col];led_medium[col]=medium[col];led_faint[col]=low[col];
             }
-            fm1_led_dim_div=2;fm1_irq_on();
+            fm1_led_dim_div=0;fm1_irq_on();
             screen_flush();
         }
     }

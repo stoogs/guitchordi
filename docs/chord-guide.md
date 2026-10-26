@@ -23,3 +23,17 @@ FM-1 key LEDs are monochrome. The adapter maps green/high to full brightness, am
 The guide runs on UI/LED polling, caches the eleven slot relationships, and uses compact root/pitch-class metadata. It performs no per-sample work and allocates no runtime memory. The 14-voice DSP and automatic rhythm scheduler are unchanged.
 
 Validation covers all 6,050 style/current/candidate combinations, known resolutions, edited slots, voicing/transposition invariance, level bounds and absence of audio attacks. Native/UBSan and WASM checks pass; existing Freeplay audio stays exact. The FM-1 target compiles, but physical operation is still unverified.
+
+## FM-1 LED contrast follow-up
+
+The working beta checkpoint is `0861137`. The next source change uses full,
+one-quarter and one-twelfth matrix-frame duty for high/medium/low suggestions,
+increasing their separation. Idle function buttons use the faint tier;
+active functions and pressed/selected note keys use full brightness. Hardware
+LEDs are monochrome; the screen retains green/amber/red guidance. The source
+scheduler is tested over repeated full cycles, but visual brightness and flicker
+are pending physical validation. This change does not alter audio levels.
+
+Local target build, LED duty-cycle checks, PCM safety/update tests and compiled
+processor boot/note/PCM capture pass. LED package SHA-256:
+`98cc4ee9b4ab4b74ba531d38f81449a2dd58a23dcfa0930abb574da9aab6d043`. Not installed; visual contrast remains unverified.

@@ -1,3 +1,14 @@
+## Function lighting and clearer chord guidance — 26 October 2026
+
+Working hardware beta was saved and pushed first as `0861137`. A separate LED
+change gives every idle function button a faint glow, makes active/pressed
+functions bright, and spreads recommendation duty cycles to 100% / 25% / 8.3%.
+Pressed/selected note keys remain bright; unplayed white keys remain dark.
+The monochrome matrix uses one twelve-frame scheduler, with the HAL's second
+dimming gate disabled to avoid interacting brightness gates. At the nominal scan
+rate the faint tier refreshes at roughly 76 Hz. Physical appearance/flicker still
+needs a device check. Audio gain and the quiet beta ceiling are unchanged.
+
 ## Working physical beta — 26 October 2026
 
 The corrected quiet candidate installed through Guitchordi's outgoing updater.
