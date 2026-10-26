@@ -19,7 +19,7 @@ for(let tone=0;tone<16;tone++){
     assert.ok(e.gm_active()<=14);
   }
   assert.equal(e.gm_active(),0);hashes.add(hash.digest('hex'));
-  e.fw_button(7,1);e.fw_button(7,0);const saved=new Uint32Array(e.memory.buffer,e.fw_store(),46).slice();assert.equal(saved[0],0x474d000b);
+  e.fw_button(7,1);e.fw_button(7,0);const saved=new Uint32Array(e.memory.buffer,e.fw_store(),46).slice();assert.equal(saved[0],0x474d000c);
   e.fw_boot();new Uint32Array(e.memory.buffer,e.fw_store(),46).set(saved);assert.equal(e.fw_restore(),1);assert.equal(e.fw_tone(),tone);
 }
 assert.equal(hashes.size,16,'all patches generate distinct audio');assert.equal(sampleIndex*4,native.length);

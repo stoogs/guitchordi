@@ -5,7 +5,7 @@ const patches=JSON.parse(fs.readFileSync('web/instruments.json')).instruments;
 const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('build/simulator.wasm')),{}).exports;e._initialize();
 const rate=44100,dir='build/audio-review';fs.mkdirSync(dir,{recursive:true});
 function render(tone,level,single=false){
-  e.fw_boot();e.fw_button(8,1);e.fw_button(8,0);e.fw_button(8,1);e.fw_button(8,0);e.fw_set_tone(tone);e.fw_encoder(3,level-50);
+  e.fw_boot();e.fw_button(8,1);e.fw_button(8,0);e.fw_button(8,1);e.fw_button(8,0);e.fw_set_tone(tone);e.fw_encoder(3,level-e.fw_velocity());
   const audio=new Float32Array(rate*4),keys=[11,12,14,16,18,19];let next=0,peak=0,energy=0;
   for(let offset=0;offset<audio.length;offset+=128){
     if(single){if(!offset){e.fw_keys(1<<keys[0]);e.fw_keys(0);}}

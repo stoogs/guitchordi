@@ -4,7 +4,7 @@ const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('buil
 const button=n=>{e.fw_button(n,1);e.fw_button(n,0);};
 function advance(ms){let n=Math.round(ms*44.1);while(n){let count=Math.min(n,128);const a=new Float32Array(e.memory.buffer,e.fw_render(count),count);assert.ok(a.every(x=>Number.isFinite(x)&&Math.abs(x)<=.980001));assert.ok(e.gm_active()<=14);n-=count;}}
 function snapshot(){button(7);return Array.from(new Uint32Array(e.memory.buffer,e.fw_store(),46));}
-function capture(mode,vel,key){e.fw_boot();button(8);button(8);e.fw_set_tone(0);for(let i=0;i<mode;i++)button(8);button(5);e.fw_encoder(4,-100);e.fw_encoder(6,vel-80);button(1);assert.equal(e.fw_velocity(),50,'attack strength does not change tone intensity');e.fw_keys(1<<key);const pcm=[];for(let i=0;i<8;i++)pcm.push(...new Float32Array(e.memory.buffer,e.fw_render(128),128));return pcm;}
+function capture(mode,vel,key){e.fw_boot();button(8);button(8);e.fw_set_tone(0);for(let i=0;i<mode;i++)button(8);button(5);e.fw_encoder(4,-100);e.fw_encoder(6,vel-80);button(1);assert.equal(e.fw_velocity(),60,'attack strength does not change tone intensity');e.fw_keys(1<<key);const pcm=[];for(let i=0;i<8;i++)pcm.push(...new Float32Array(e.memory.buffer,e.fw_render(128),128));return pcm;}
 const energy=a=>a.reduce((sum,x)=>sum+x*x,0);
 for(const mode of [1,2]){
  const soft=capture(mode,80,0),normal=capture(mode,80,11),accent=capture(mode,80,21);

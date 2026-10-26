@@ -13,7 +13,7 @@ Independent M-VAVE FM-1 six-string instrument simulator. [brief.md](brief.md) is
 
 [Illustrated player manual](http://localhost:8769/manual/) · [Printable PDF](output/pdf/Guitchordi-Manual.pdf)
 
-Factory defaults: **Steel Acoustic · Classic Rock · standard EADGBE · 90 BPM**. Strum starts at **Down · 1/8 · FREE · 50 ms**. K4 offers **INSTANT**, then 5 ms steps through 250 ms. Saved browser settings override factory defaults. [Current performance controls](docs/performance-modes.md). **GLO K3** selects fourteen [guitar tunings](docs/tuning-presets.md), with Standard EADGBE as default and the tuning shown above the chord.
+Factory defaults: **Nylon Acoustic · Classic Rock · standard EADGBE · 90 BPM · 60% intensity**, starting in **Strum mode**. Strum starts at **Down · 1/8 · FREE · 50 ms**. K4 offers **INSTANT**, then 5 ms steps through 250 ms. Saved browser settings override factory defaults. [Current performance controls](docs/performance-modes.md). **GLO K3** selects fourteen [guitar tunings](docs/tuning-presets.md), with Standard EADGBE as default and the tuning shown above the chord.
 
 **Hardware: experimental, not cleared for first flash.** See [first device test preparation](docs/first-device-test.md). Recovery/USB behaviour has not been verified on a physical unit; the official repository V15 image now passes the pinned checksum. No device has been flashed.
 

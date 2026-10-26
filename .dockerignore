@@ -40,3 +40,4 @@
 !site/**
 !.github/
 !.github/**
+!fmhub.json

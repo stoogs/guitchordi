@@ -25,3 +25,6 @@ header nav{display:flex;gap:22px;font-size:13px}header nav a:first-child{padding
 .performance-hint{margin:6px 0 0;font-size:11px;color:#b9d9c8;line-height:1.5}#chord-lock.is-locked{color:#f87858}
 
 .chord-hint{font-size:11px;color:#b9cdbf;margin:7px 0 0}.chord-guide [data-suggestion="3"],.black-key[data-suggestion="3"]{--hint:#a3dfb2}.chord-guide [data-suggestion="2"],.black-key[data-suggestion="2"]{--hint:#e6b968}.chord-guide [data-suggestion="1"],.black-key[data-suggestion="1"]{--hint:#d88e86}.chord-guide button[data-suggestion]:not(.selected){color:var(--hint);border-bottom:3px solid var(--hint)}.black-key[data-suggestion]:not(.lit){color:var(--hint);border-color:color-mix(in srgb,var(--hint),#3e4842 40%);background:color-mix(in srgb,var(--hint) var(--hint-fill),#25312a);box-shadow:0 0 12px color-mix(in srgb,var(--hint) var(--hint-glow),transparent)}
+
+/* A small illuminated cap marks the first contact of each playing lane. */
+.white-key{position:relative}.white-key.lane-home:before{content:"";position:absolute;top:5px;left:28%;right:28%;height:4px;border-radius:4px;background:#f6ffef;box-shadow:0 0 7px 2px #f0ffcb99;pointer-events:none}

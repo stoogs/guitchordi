@@ -8,7 +8,7 @@ import gzip, hashlib, io, sys, tarfile
 from pathlib import Path
 root=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve()
 dirs=['firmware','dsp','web','scripts','tests','third_party','docs','site','.github']
-files=['README.md','LICENSE','NOTICES.md','package.json','Dockerfile','compose.yaml',
+files=['fmhub.json','README.md','LICENSE','NOTICES.md','package.json','Dockerfile','compose.yaml',
        'nginx.conf','nginx.simulator.conf','.dockerignore','.gitignore','.gitattributes','brief.md']
 paths=[root/f for f in files]
 for directory in dirs:paths.extend(p for p in (root/directory).rglob('*') if p.is_file() and not p.is_symlink() and '__pycache__' not in p.parts)

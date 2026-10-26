@@ -12,8 +12,7 @@ completed. Recovery enumeration and a full private backup were verified from
 Felucca. Entry from V15 and restoration to another firmware remain untested;
 worst-case audio timing also remains open. The LED update has installed, with
 physical brightness feedback pending. No firmware release or Hub submission was
-published. A static [project website and browser demo](website.md) are now ready
-for GitHub Pages. The older assessment below is retained as qualification history.
+published. The [project website and browser demo](https://stoogs.github.io/guitchordi/) are live on GitHub Pages. The current [launch packet](hub-launch-draft.md) records remaining gates and draft submission links. The older assessment below is retained as qualification history.
 
 ## Earlier position
 

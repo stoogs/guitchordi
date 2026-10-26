@@ -8,7 +8,7 @@ const pcs=notes=>[...new Set(notes.filter(n=>n>=0).map(n=>n%12))].sort((a,b)=>a-
 const button=n=>{e.fw_button(n,1);e.fw_button(n,0);};
 const name=p=>{const bytes=new Uint8Array(e.memory.buffer);let s='';while(bytes[p])s+=String.fromCharCode(bytes[p++]);return s;};
 e.fw_boot();assert.equal(e.fw_tuning(),0);assert.equal(e.fw_tuning_count(),14);assert.equal(e.fw_open_pitch(-1),-1);
-button(7);const original=new Uint32Array(e.memory.buffer,e.fw_store(),46).slice();assert.equal(original[0],0x474d000b);
+button(7);const original=new Uint32Array(e.memory.buffer,e.fw_store(),46).slice();assert.equal(original[0],0x474d000c);
 let shapes=0,contacts=0;
 for(let tuning=0;tuning<presets.length;tuning++){
  assert.equal(name(e.fw_tuning_name(tuning)),presets[tuning].name);

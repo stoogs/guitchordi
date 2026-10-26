@@ -110,7 +110,7 @@ function publish(data){
   const resetChoices=['Cancel','This slot','All slots'];
   const performanceNames=['Freeplay','Strum','Arp'];
   const divisions=['1/1','1/1D','1/1T','1/2','1/2D','1/2T','1/4','1/4D','1/4T','1/8','1/8D','1/8T','1/16','1/16D','1/16T','1/32','1/32D','1/32T'];
-  const patterns=data.performance===1?['Down','Up','Alternate','Block','Bass + chord','Shuffle']:['Up','Down','Up-down','Down-up','Outside-in','Random'];
+  const patterns=data.performance===1?['Down','Up','Alternate','Block','Bass + chord','Shuffle']:['Up','Down','Up-down','Down-up','Outside-in','Random','Random half chord','Random two-thirds','Full chord'];
   const rhythmActive=data.performance>0&&data.page===0;
   const rhythmLabels=['Pattern','Division','Gate',data.performance===1?'Strum sweep':'Swing'];
   const rhythmValues=[patterns[data.rhythm[0]],divisions[data.rhythm[1]],data.rhythm[2]===4?'FREE':`${(data.rhythm[2]+1)*25}%${data.gateTails?' + tail':''}`,data.performance===1?(data.rhythm[3]?`${data.rhythm[3]*5} ms`:'INSTANT'):`${data.rhythm[3]*5}%`];
@@ -143,7 +143,7 @@ function publish(data){
   $('reset-menu').querySelector('strong').textContent=data.factoryReset?'Reset everything?':'Reset chord slots';
   $('reset-menu').querySelector('small').textContent=data.factoryReset?'SEL confirms · HOME cancels':'PRESETS chooses · SEL confirms · HOME cancels';
   setText('reset-options',data.factoryReset?'All settings and chord slots return to factory defaults.':resetChoices.map((label,i)=>`${data.resetMenu===i+1?'▸ ':''}${label}`).join('  ·  '));
-  $('guide-knob1').title=rhythmActive?'Six patterns for this mode':'50% normal · below: soft/dark · above: bright/driven · applies to new notes';
+  $('guide-knob1').title=rhythmActive?(data.performance===2?'Nine patterns: six single-note, random half / two-thirds, full chord':'Six strum patterns'):'50% normal · below: soft/dark · above: bright/driven · applies to new notes';
   const style=styles[data.mode]??styles[0];
   const patch=instruments[data.tone]??instruments[0];
   $('instrument').value=String(data.tone);$('instrument').disabled=!enabled||!!data.resetMenu||!!data.factoryReset;
@@ -157,7 +157,7 @@ function publish(data){
     const label=patch.family==='Other'?noteName:['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][data.openPitches[part]%12],zone=key<6?'soft':key<12?'normal':'accent',partLabel=patch.mapping.indexOf(part)+1;
     b.querySelector('span').textContent=label;
     b.title=`${zone.toUpperCase()} · ${noteName} · part ${partLabel} · key ${key+1}`;
-    b.setAttribute('aria-label',`${patch.name}, ${zone}, ${noteName}, part ${partLabel}, white key ${key+1}`);
+    b.setAttribute('aria-label',`${patch.name}, ${zone}, ${noteName}, part ${partLabel}, white key ${key+1}${[0,6,12].includes(key)?", lane start":""}`);
   });}
   visuals.update(data,patch);
   $('summary-instrument').textContent=`${patch.name} · ${data.chords[data.selected]}`;
@@ -195,10 +195,10 @@ function publish(data){
     for(let i=0;i<data.frame.length;i++){const p=data.frame[i],j=i*4;image.data[j]=((p>>11)&31)*255/31;image.data[j+1]=((p>>5)&63)*255/63;image.data[j+2]=(p&31)*255/31;image.data[j+3]=255;}
     drawing.putImageData(image,0,0);
   }
-  for(const [note,b] of keyControls){b.classList.toggle('lit',!!(data.keys&(1<<note)));b.classList.toggle('muted',!!(data.muted&(1<<note)));}
+  for(const [note,b] of keyControls){b.classList.toggle('lit',!!(data.keys&(1<<note)));b.classList.toggle('muted',!!(data.muted&(1<<note)));b.classList.toggle('lane-home',[WHITE[0],WHITE[6],WHITE[12]].includes(note)&&data.brightness[note]>0&&!(data.muted&(1<<note)));}
   for(const [button,b] of buttonControls)b.classList.toggle('lit',!!(data.buttons&(1<<button)));
   for(const {role,dial,valueLabel} of knobs){
-    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:role===5?[data.tuning,data.tuningCount-1]:[data.rhythmVelocity,100]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?5:role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
+    const [value,max]=globals&&role>=3&&role<=6?(role===3?[data.gateTails,1]:role===4?[data.humanity/10,10]:role===5?[data.tuning,data.tuningCount-1]:[data.rhythmVelocity,100]):rhythmActive&&role>=3&&role<=6?[data.rhythm[role-3],role===3?(data.performance===2?8:5):role===4?17:role===5?4:data.performance===1?50:12]:role==='master'?[data.volume,100]:role===6?[data.voicing,data.voicingCount-1]:role===0?[data.bpm-40,200]:role===1?[data.tone,instruments.length-1]:role===2?(data.resetMenu?[data.resetMenu-1,2]:data.editing?[data.chord,catalogue.voicingCount-1]:[data.mode,styles.length-1]):role===3?[data.velocity,100]:role===4?[data.transpose+12,24]:[data.room,100];
     dial.setAttribute('aria-disabled',data.factoryReset?'true':'false');
     const valueText=values[role==='master'?7:role];
     if(valueLabel.textContent!==valueText)valueLabel.textContent=valueText;
@@ -220,7 +220,7 @@ $('power').onclick=async()=>{
     if(!ctx)ctx=new AudioContext({latencyHint:'interactive',sampleRate:44100});
     await ctx.resume();if(ctx.sampleRate!==44100)throw new Error('This simulator requires a 44.1 kHz context');
     if(!node){
-      const response=await fetch('./firmware.wasm');if(!response.ok)throw new Error(`Firmware host build unavailable (${response.status})`);
+      const response=await fetch('./firmware.wasm?v=12');if(!response.ok)throw new Error(`Firmware host build unavailable (${response.status})`);
       const module=await WebAssembly.compile(await response.arrayBuffer());
       await ctx.audioWorklet.addModule(new URL('./worklet.mjs',import.meta.url));
       let store;try{store=JSON.parse(localStorage.getItem(STORE)||localStorage.getItem(LEGACY_STORE)||'null');}catch{}

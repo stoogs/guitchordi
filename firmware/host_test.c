@@ -8,7 +8,7 @@ static void advance(int ms) {
     int n = (int)((int64_t)ms * GM_RATE / 1000);
     while (n > 0) { int count = n > 128 ? 128 : n; fw_render(count); n -= count; }
 }
-static void fixture_boot(void) { fw_boot();fw_button(8,1);fw_button(8,0);fw_button(8,1);fw_button(8,0);fw_set_mode(0);fw_set_tone(0);fw_keys(1u<<3);fw_keys(0);advance(3001); }
+static void fixture_boot(void) { fw_boot();fw_button(8,1);fw_button(8,0);fw_button(8,1);fw_button(8,0);fw_set_mode(0);fw_encoder(3,-10);fw_set_tone(0);fw_keys(1u<<3);fw_keys(0);advance(3001); }
 int main(int argc, char **argv) {
     fw_boot();assert(fw_boot_screen());fw_frame();advance(100);fw_frame();
     assert(fw_attacks()==0);advance(2101);assert(!fw_boot_screen());

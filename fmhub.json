@@ -1,0 +1,5 @@
+{
+  "what": "A chord and string instrument: 16 synthesized sounds, 50 chord styles, editable voicings, guitar tunings, and Freeplay, Strum and Arp modes with partial-chord pulses.",
+  "kinds": ["chords"],
+  "play": "https://stoogs.github.io/guitchordi/emu/"
+}
