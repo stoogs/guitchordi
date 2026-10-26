@@ -632,7 +632,8 @@ uint16_t *fw_frame(void) {
     const char *chord = egg_active?egg_names[egg_step?((egg_step-1u)/8u)%4u:0]:chord_names[slots[selected]];
     int chord_width=rhythm_controls?112:148, chord_center=rhythm_controls?60:80;
     int title_size=!rhythm_controls && display_width(chord,display_glyphs_36)<=chord_width?36:display_width(chord,display_glyphs_26)<=chord_width?26:18;
-    display_text(chord_center,85,egg_active?"YELLOW / LOOP":tuning_labels[tuning],12,mint);
+    if(egg_active)text(chord_center-39,77,"YELLOW / LOOP",1,mint);
+    else display_text(chord_center,85,tuning_labels[tuning],12,mint);
     display_text(chord_center,114,chord,title_size,white_ink);
     rect(rhythm_controls?120:160,77,1,41,0x2166);
     if(rhythm_controls) {
