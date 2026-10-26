@@ -43,6 +43,21 @@ or firmware release. Pages was subsequently configured to use GitHub Actions wit
 Official references: [GitHub Pages static hosting](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages),
 [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
+## Verified deployment — 26 October 2026
+
+- Live site: https://stoogs.github.io/guitchordi/
+- Browser instrument: https://stoogs.github.io/guitchordi/emu/
+- Published application commit: `a73546950b5e1e081cb931547750a18f1ef6c0d9`.
+- Successful build and deployment: https://github.com/stoogs/guitchordi/actions/runs/40387707516
+- Public browser QA confirmed that holding PLAY for five seconds starts the
+  hidden instrumental Yellow chord-loop nod, and one further press stops it
+  with zero active voices. Browser output was muted; this is input/state proof,
+  not a listening test or a full song transcription.
+- The website and boot screen no longer carry the decorative “by Stoogs” line;
+  legal attribution remains intact.
+- The corresponding FM-1 candidate was built and checked locally, but has not
+  been flashed. No firmware release or Hub submission was published.
+
 ## Firmware Hub material
 
 Suggested card copy:
