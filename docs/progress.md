@@ -1,3 +1,20 @@
+## Byline removal, hidden loop and Pages deployment — 26 October 2026
+
+Removed the public “by Stoogs” byline from the site and C boot screen, retaining
+legal credits and repository ownership. Hold PLAY for five seconds for a quiet
+instrumental B / F# / E / B chord-loop nod to Yellow at 88 BPM; tap PLAY again to
+stop immediately. It uses synthesized steel-acoustic chords, without a song
+melody, lyrics or recording. Normal tone/style/tuning settings are retained.
+The active PLAY LED and YELLOW / LOOP LCD caption indicate playback. The Easter
+egg is not saved. Holding the stop press cannot immediately restart it.
+Native, UBSan and WASM checks pass, including repeated physical scan levels,
+threshold, stop/rearm, mute, restore/reset behavior and 640,000 exact matching
+native/WASM samples across a loop. The working device audio ceiling is unchanged.
+The updated hardware candidate is built separately; no new flash is authorized
+by this website deployment. GitHub Pages settings were configured by the agent
+with explicit user authorization after the user signed in. Website deployment
+is pending validation below; no firmware release or Hub submission is included.
+
 ## LED installation and GitHub Pages website — 26 October 2026
 
 The user approved the LED update; the installer completed and returned running

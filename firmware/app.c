@@ -34,6 +34,8 @@ static int play_mode,bpm=90,tempo_edit, rhythm[2][4]={{0,9,4,10},{0,9,4,0}};
 static int gate_tails,humanity=2,tuning,rhythm_velocity=80;
 static uint32_t sample_clock,next_tick,step_fraction,rhythm_step,rhythm_rng=0x8769u;
 static int auto_running,queued;
+static int egg_active,play_fired;
+static uint32_t play_started,egg_step;
 static uint32_t auto_blocked;
 typedef struct { uint32_t due; int part,pitch,tone,character,gate; float strength; } auto_note;
 static auto_note auto_notes[6];
@@ -43,7 +45,8 @@ static const char *const play_names[]={"Freeplay","Strum","Arp"};
 static const char *const division_names[]={"1/1","1/1D","1/1T","1/2","1/2D","1/2T","1/4","1/4D","1/4T","1/8","1/8D","1/8T","1/16","1/16D","1/16T","1/32","1/32D","1/32T"};
 static const char *const strum_names[]={"DOWN","UP","ALTERNATE","BLOCK","BASS+CHORD","SHUFFLE"};
 static const char *const arp_names[]={"UP","DOWN","UP-DOWN","DOWN-UP","OUTSIDE-IN","RANDOM"};
-static void rhythm_cancel(void) { auto_running=queued=0; gm_auto_stop(); }
+static void rhythm_cancel(void) { auto_running=queued=egg_active=0; gm_auto_stop(); }
+int fw_easter_egg(void) { return egg_active; }
 int fw_play_mode(void) { return play_mode; }
 int fw_bpm(void) { return bpm; }
 int fw_gate_tails(void) { return gate_tails; }
@@ -57,7 +60,7 @@ const char *fw_tuning_label(void) { return tuning_labels[tuning]; }
 int fw_open_pitch(int part) { return part>=0 && part<6?tuning_opens[tuning][part]:-1; }
 int fw_tempo_edit(void) { return tempo_edit; }
 int fw_rhythm_param(int i) { return i>=0 && i<4 ? rhythm[play_mode==2][i] : -1; }
-int fw_running(void) { return auto_running || queued; }
+int fw_running(void) { return auto_running || queued || egg_active; }
 int fw_lock_progress(void) { return (buttons&(1u<<2)) ? (clock_ms-hold_started>=3000?1000:(int)((clock_ms-hold_started)/3)) : (locked?1000:0); }
 static uint32_t rhythm_random(void) { rhythm_rng^=rhythm_rng<<13; rhythm_rng^=rhythm_rng>>17; rhythm_rng^=rhythm_rng<<5; return rhythm_rng; }
 static void rhythm_fire(auto_note *n) {
@@ -121,13 +124,33 @@ static void rhythm_tick(void) {
     rhythm_step++;
 }
 static void rhythm_start(void) { rhythm_cancel();auto_running=1;rhythm_step=step_fraction=0;rhythm_tick(); }
+/* Hidden acoustic chord-loop nod: common B / F# / E / B harmony, not a
+ * transcription of the song's melody or a recording. Keep normal settings. */
+static const uint8_t egg_chords[4][6]={
+    {47,54,59,63,66,71},{42,49,54,58,61,66},
+    {40,47,52,56,59,64},{47,54,59,63,66,71}
+};
+static const char *const egg_names[]={"B","F#","E","B"};
+static void egg_tick(void) {
+    uint32_t chord=(egg_step/8u)%4u;
+    next_tick=sample_clock+GM_RATE*60u/(88u*2u);
+    queued=6;
+    for(int i=0;i<6;i++) {
+        int part=(egg_step&1u)?5-i:i;
+        auto_notes[i]=(auto_note){sample_clock+(uint32_t)i*GM_RATE/200u,
+            part,egg_chords[chord][part],4,50,0,.42f};
+    }
+    egg_step++;
+}
 static float *rhythm_render(int frames) {
     int done=0;
     while(done<frames) {
-        if(auto_running && (int32_t)(sample_clock-next_tick)>=0) rhythm_tick();
+        if((auto_running || egg_active) && (int32_t)(sample_clock-next_tick)>=0) {
+            if(egg_active)egg_tick();else rhythm_tick();
+        }
         while(queued && (int32_t)(sample_clock-auto_notes[0].due)>=0) { rhythm_fire(&auto_notes[0]);for(int i=1;i<queued;i++)auto_notes[i-1]=auto_notes[i];queued--; }
         int count=frames-done;
-        if(auto_running && (uint32_t)(next_tick-sample_clock)<(uint32_t)count)count=(int)(next_tick-sample_clock);
+        if((auto_running || egg_active) && (uint32_t)(next_tick-sample_clock)<(uint32_t)count)count=(int)(next_tick-sample_clock);
         if(queued && (uint32_t)(auto_notes[0].due-sample_clock)<(uint32_t)count)count=(int)(auto_notes[0].due-sample_clock);
         if(count<1)continue;
         float *samples=gm_render(count);memcpy(auto_output+done,samples,(unsigned)count*sizeof(float));
@@ -231,7 +254,7 @@ int fw_key_pitch(int key) {
     int pitch=fw_slot_pitch(selected,string_of(key));
     return pitch<0 ? -1 : gm_pitch(tone,pitch+transpose);
 }
-void fw_panic(void) { boot_visible=0; auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u<<black[i]);auto_running=queued=0; gm_reset(); memset(room_line, 0, sizeof room_line); room_cursor = 0; keys = buttons = 0; lock_fired = edit_fired = 0; reset_choice = -1; }
+void fw_panic(void) { boot_visible=0; auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u<<black[i]);auto_running=queued=egg_active=0;play_fired=1; gm_reset(); memset(room_line, 0, sizeof room_line); room_cursor = 0; keys = buttons = 0; lock_fired = edit_fired = 0; reset_choice = -1; }
 static void defaults(void) {
     fw_panic(); memcpy(slots, mode_slots[16], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
     selected = 0; locked = page = editing = transpose = 0;tone=4;mode=16;
@@ -243,6 +266,7 @@ static void defaults(void) {
 void fw_boot(void) {
     defaults(); attacks=store_version=clock_ms=hold_started=clock_remainder=0;
     global_started=0;global_fired=factory_reset=0;reset_key_blocked=0;boot_visible=1;
+    play_started=egg_step=0;play_fired=0;
     memset(settings,0,sizeof settings);
 }
 void fw_keys(uint32_t mask) {
@@ -352,7 +376,13 @@ void fw_button(int button, int down) {
     case 5: page=page==3?0:3;editing=tempo_edit=0;reset_choice=-1;break;                       // GLO: global performance settings
     case 6: tempo_edit=0;page = 0; editing = 0; reset_choice=-1; break;
     case 7: save(); break;
-    case 10: fw_panic(); break;                    // PLAY/STOP repurposed as damp, no transport
+    case 10: {
+        uint32_t held_buttons=buttons,held_keys=keys;
+        int stopping=egg_active;
+        fw_panic();buttons=held_buttons;keys=held_keys;
+        play_started=clock_ms;play_fired=stopping;
+        break; // Immediate damp; a fresh five-second hold can start the egg.
+    }
     case 12: transpose = bound(transpose - 12, -12, 12); break;
     case 13: transpose = bound(transpose + 12, -12, 12); break;
     default: break;                               // reserved controls cannot invent notes
@@ -389,11 +419,17 @@ void fw_master(int value) { if(factory_reset)return; int next=bound(value,0,100)
 float *fw_render(int frames) {
     if(frames<1 || frames>GM_BLOCK)return 0;
     float *samples;
-    if(play_mode || queued || auto_running) samples=rhythm_render(frames);else { samples=gm_render(frames);sample_clock+=(uint32_t)frames; }
+    if(play_mode || queued || auto_running || egg_active) samples=rhythm_render(frames);else { samples=gm_render(frames);sample_clock+=(uint32_t)frames; }
     if (!samples) return 0;
     clock_remainder += (uint32_t)frames * 1000u;
     clock_ms += clock_remainder / GM_RATE;
     clock_remainder %= GM_RATE;
+    if(!factory_reset && reset_choice<0 && (buttons&(1u<<10)) && !play_fired && clock_ms-play_started>=5000u) {
+        uint32_t held_buttons=buttons,held_keys=keys;
+        fw_panic();buttons=held_buttons;keys=held_keys;
+        egg_active=play_fired=1;egg_step=0;next_tick=sample_clock;
+        memset(samples,0,(unsigned)frames*sizeof(float));
+    }
     if (!factory_reset && (buttons & (1u << 2)) && !lock_fired && clock_ms - hold_started >= 3000) {
         locked = !locked; lock_fired = 1; reset_choice=-1;
     }
@@ -423,7 +459,7 @@ uint32_t fw_muted(void) {
     for (int i = 0; i < 16; i++) if (fw_slot_pitch(selected,string_of(i)) < 0) mask |= 1u << white[i];
     return mask;
 }
-uint32_t fw_buttons(void) { return buttons | (locked ? 1u << 2 : 0) | (tempo_edit?1u<<3:0) | (play_mode?1u<<8:0) | (page==2?1u:0) | (page==3?1u<<5:0); }
+uint32_t fw_buttons(void) { return buttons | (locked ? 1u << 2 : 0) | (tempo_edit?1u<<3:0) | (play_mode?1u<<8:0) | (page==2?1u:0) | (page==3?1u<<5:0) | (egg_active?1u<<10:0); }
 static void rect(int x, int y, int w, int h, uint16_t color) {
     for (int row = y; row < y + h && row < 240; row++) for (int col = x; col < x + w && col < 240; col++)
         if (row >= 0 && col >= 0) framebuffer[row * 240 + col] = color;
@@ -553,7 +589,6 @@ static uint16_t *boot_frame(void) {
     boot_spark(36,96,green);boot_spark(204,148,orange);boot_spark(191,83,red);
     display_text(121,133,"GuitChordi",36,0x19c9);
     display_text(119,131,"GuitChordi",36,0xf79c);
-    display_text(120,153,"by Stoogs",12,0xaed7);
     return framebuffer;
 }
 #ifdef GM_FM1
@@ -594,10 +629,10 @@ uint16_t *fw_frame(void) {
     column_value(80,52,gm_tone_name(tone),orange);
     column_value(160,52,play_names[play_mode],mint);
     text(175,64,"BPM",1,dim);number(200,64,bpm,1,orange);
-    const char *chord = chord_names[slots[selected]];
+    const char *chord = egg_active?egg_names[egg_step?((egg_step-1u)/8u)%4u:0]:chord_names[slots[selected]];
     int chord_width=rhythm_controls?112:148, chord_center=rhythm_controls?60:80;
     int title_size=!rhythm_controls && display_width(chord,display_glyphs_36)<=chord_width?36:display_width(chord,display_glyphs_26)<=chord_width?26:18;
-    display_text(chord_center,85,tuning_labels[tuning],12,mint);
+    display_text(chord_center,85,egg_active?"YELLOW / LOOP":tuning_labels[tuning],12,mint);
     display_text(chord_center,114,chord,title_size,white_ink);
     rect(rhythm_controls?120:160,77,1,41,0x2166);
     if(rhythm_controls) {

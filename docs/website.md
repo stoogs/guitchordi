@@ -39,7 +39,7 @@ private-file exclusions. The codebase's 17 unit tests also pass.
    at `https://stoogs.github.io/guitchordi/emu/`.
 
 The workflow is intentionally manual. A source push does not create a website
-or firmware release. No hosting settings were changed during local preparation.
+or firmware release. Pages was subsequently configured to use GitHub Actions with explicit user authorization. Publication status is recorded with the current deployment evidence.
 Official references: [GitHub Pages static hosting](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages),
 [custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
@@ -47,7 +47,7 @@ Official references: [GitHub Pages static hosting](https://docs.github.com/en/pa
 
 Suggested card copy:
 
-> GuitChordi by Stoogs turns the M-VAVE FM-1 into a chord and string instrument,
+> GuitChordi turns the M-VAVE FM-1 into a chord and string instrument,
 > with 16 instrument colours, 50 chord styles, editable voicings, and Freeplay,
 > Strum and Arp modes. Try the shared C instrument in your browser, then explore
 > the FM-1 beta as device qualification progresses.

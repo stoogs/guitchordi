@@ -17,7 +17,8 @@
     "test:rhythm": "sh scripts/check-rhythm.sh",
     "prepare:device": "python3 scripts/prepare-device-test.py",
     "build:site": "python3 scripts/build-site.py",
-    "test:site": "python3 scripts/check-site.py"
+    "test:site": "python3 scripts/check-site.py",
+    "test:easter-egg": "sh scripts/check-easter-egg.sh"
   },
   "engines": {
     "node": ">=22"

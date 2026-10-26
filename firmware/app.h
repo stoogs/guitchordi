@@ -13,6 +13,7 @@ void fw_master(int value);
 void fw_audio_diagnostics(uint32_t max_us,uint32_t late,unsigned master,uint32_t invalid);
 #endif
 void fw_panic(void);
+int fw_easter_egg(void);
 float *fw_render(int frames);
 uint16_t *fw_frame(void);
 uint32_t fw_lights(void);

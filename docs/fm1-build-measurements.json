@@ -1,14 +1,14 @@
 {
   "status": "compiled-unverified-on-device",
-  "app_bytes": 230640,
-  "app_sha256": "1a4cc7992fd61445d04b4e34a98c55b428c989d69e528d9e183cc23ac7eeea2a",
-  "ram_data_bss_bytes": 60376,
+  "app_bytes": 231116,
+  "app_sha256": "8661e9ca61c988e3b2cc0eff549709c0ef5ffafb0f4fdd6af928795310791aab",
+  "ram_data_bss_bytes": 60384,
   "pool_bytes": 115200,
   "loader_bytes": 6528,
   "package": {
     "path": "build/fm1/guitchordi-experimental.fwsc",
     "bytes": 609684,
-    "sha256": "98cc4ee9b4ab4b74ba531d38f81449a2dd58a23dcfa0930abb574da9aab6d043"
+    "sha256": "d3b0f28b3a0559ec43329c0f2571754edf38cb1c61603d2c53d8421ed9966986"
   },
   "toolchain": "20260730.1",
   "docker_image": "debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8",

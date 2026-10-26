@@ -14,6 +14,8 @@ jobs:
       - uses: actions/configure-pages@v5
       - name: Build browser instrument and static site
         run: python3 scripts/build-site.py
+      - name: Verify hidden transport and native/WASM output
+        run: npm run test:easter-egg
       - name: Verify Pages paths and source archive
         run: python3 scripts/check-site.py
       - uses: actions/upload-pages-artifact@v4
