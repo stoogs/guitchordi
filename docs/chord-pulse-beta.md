@@ -40,10 +40,25 @@ Local evidence:
 Candidate: `build/device-prep/chord-pulse-lanes/guitchordi-experimental.fwsc`.
 SHA-256: `78ff59f8c4efb20eff96e930a2a571dd0fa4bae5618b3677a992765116a4eb9b`.
 App 231416 B; data/BSS 60384 B; framebuffer pool 115200 B (RAM unchanged).
-Not flashed. No public firmware release or Hub submission.
+Initially staged without flashing; see the approved installation update below.
+No public firmware release or Hub submission.
 See [the launch packet](hub-launch-draft.md) for the remaining hardware gates.
 
 Pages run [40392420444](https://github.com/stoogs/guitchordi/actions/runs/40392420444)
 succeeded for commit `50bb7fa3c6db5c137e913a3227c137d81853241f`. Public-demo QA
 confirmed all three lane markers, the two-thirds K1 label/range and an isolated
 four-voice chord attack. Local preview stopped after verification.
+
+## Approved device installation
+
+The user explicitly requested this flash on 26 October 2026. The staged package
+hash above was verified before writing. The reference MIDI installer updated the
+running FM-1_982 through its ordinary update path, exited 0, and reported a
+rebooted running FM-1_982. A separate post-install identity request also answered
+normally on the macOS-cached `X0X FM-1` endpoint. The ignored local installation
+record is `build/device-prep/chord-pulse-lanes/installation-result.json`.
+
+Audio, new pattern behavior, LED appearance and sustained-load validation await
+the user's hands-on feedback. This installation is not V15 entry or an outgoing
+switch to another firmware. No further flash, public release or Hub submission
+was performed or authorized by this installation request.
