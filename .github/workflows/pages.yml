@@ -1,0 +1,34 @@
+name: Publish GuitChordi website
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+      - name: Build browser instrument and static site
+        run: python3 scripts/build-site.py
+      - name: Verify Pages paths and source archive
+        run: python3 scripts/check-site.py
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4

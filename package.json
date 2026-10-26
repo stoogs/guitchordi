@@ -15,7 +15,9 @@
     "test:instruments": "sh scripts/check-instruments.sh",
     "review:instruments": "node scripts/review-instruments.mjs",
     "test:rhythm": "sh scripts/check-rhythm.sh",
-    "prepare:device": "python3 scripts/prepare-device-test.py"
+    "prepare:device": "python3 scripts/prepare-device-test.py",
+    "build:site": "python3 scripts/build-site.py",
+    "test:site": "python3 scripts/check-site.py"
   },
   "engines": {
     "node": ">=22"

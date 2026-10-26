@@ -4,7 +4,18 @@ Checked against [Submit your firmware](https://thefirmwarehub.com/submit/) and
 [the Knowledge Base](https://thefirmwarehub.com/kb/) on 25 October 2026.
 This is our preparation plan, not a submission or clearance to flash.
 
-## Current position
+## 26 October hardware and website checkpoint
+
+The corrected quiet beta is user-confirmed working on the developer’s FM-1.
+Entry from Felucca 1.6.1, identity response, and outgoing Guitchordi updates have
+completed. Recovery enumeration and a full private backup were verified from
+Felucca. Entry from V15 and restoration to another firmware remain untested;
+worst-case audio timing also remains open. The LED update has installed, with
+physical brightness feedback pending. No firmware release or Hub submission was
+published. A static [project website and browser demo](website.md) are now ready
+for GitHub Pages. The older assessment below is retained as qualification history.
+
+## Earlier position
 
 | Gate | Evidence / outstanding work |
 | --- | --- |

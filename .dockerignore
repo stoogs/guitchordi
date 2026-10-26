@@ -35,3 +35,8 @@
 !tests/**
 !docs/**
 !third_party/**
+
+!site/
+!site/**
+!.github/
+!.github/**

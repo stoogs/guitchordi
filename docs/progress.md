@@ -1,3 +1,14 @@
+## LED installation and GitHub Pages website — 26 October 2026
+
+The user approved the LED update; the installer completed and returned running
+identity FM-1_982. Visual brightness remains awaiting user feedback. Audio level
+was unchanged. A new static project website includes browser play, an instrument
+explorer, current controls guide, A4 cheat sheet, notices and source archive.
+The manual had stale lock/knob instructions; its HTML content is corrected.
+Pages paths, browser startup/input and desktop/mobile layouts were checked.
+The manual GitHub Actions workflow prepares publication; no hosting settings,
+firmware release or Hub submission were changed. [Website guide](website.md).
+
 ## Function lighting and clearer chord guidance — 26 October 2026
 
 Working hardware beta was saved and pushed first as `0861137`. A separate LED

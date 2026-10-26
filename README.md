@@ -3,6 +3,8 @@
 > temporary output ceiling remains conservative. See [hardware evidence](docs/fm1-audio-incident.md).
 > The original first-install candidate had unsafe audio and must not be used.
 
+[Project website source](site/index.html) · [GitHub Pages build and publishing guide](docs/website.md)
+
 # Guitchordi
 
 [Print the one-page A4 controls cheatsheet](output/pdf/Guitchordi-Cheatsheet-A4.pdf) - labelled control diagram, mode chart, lock and reset shortcuts.

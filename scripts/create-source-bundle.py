@@ -7,7 +7,7 @@ No Git metadata, build binaries, downloads, backups or environment files are rea
 import gzip, hashlib, io, sys, tarfile
 from pathlib import Path
 root=Path(sys.argv[1]).resolve();out=Path(sys.argv[2]).resolve()
-dirs=['firmware','dsp','web','scripts','tests','third_party','docs']
+dirs=['firmware','dsp','web','scripts','tests','third_party','docs','site','.github']
 files=['README.md','LICENSE','NOTICES.md','package.json','Dockerfile','compose.yaml',
        'nginx.conf','nginx.simulator.conf','.dockerignore','.gitignore','.gitattributes','brief.md']
 paths=[root/f for f in files]
