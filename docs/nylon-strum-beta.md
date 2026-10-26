@@ -61,3 +61,8 @@ Candidate: `build/device-prep/nylon-strum-plus20/guitchordi-experimental.fwsc`.
 SHA-256: `ecc909f20576ec0e10440f5eaba20d2f4b3fb00f3d43b1d280799543ae491a59`.
 App 231148 bytes; data/BSS 60384 bytes; pool 115200 bytes (unchanged RAM).
 No device was accessed or flashed; no firmware release or Hub submission was made.
+
+Browser deployment of commit `75f5b6393b9c1845945d08385724219d1471edbe`
+succeeded in [Pages run 40390074668](https://github.com/stoogs/guitchordi/actions/runs/40390074668).
+The public `/guitchordi/emu/` confirmed the same Nylon/Strum factory controls and
+repeated chord attacks after publication. The local preview server was stopped.
