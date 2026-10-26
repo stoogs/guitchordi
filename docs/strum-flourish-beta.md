@@ -41,7 +41,7 @@ are unchanged. The new loop loudness and flourish still need device listening.
 
 Staged candidate: `build/device-prep/strum-flourish/guitchordi-experimental.fwsc`.
 SHA-256: `330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`.
-App: 232184 bytes. No flash or device storage write was performed for this change.
+App: 232184 bytes. Initially staged without flashing; see the approved installation below.
 No firmware release or Hub submission was published.
 
 Pages deployment [40395481427](https://github.com/stoogs/guitchordi/actions/runs/40395481427)
@@ -49,3 +49,16 @@ succeeded for application commit `264fbf9185c0c4d7c703bf78d8734c672cf60582`.
 Public browser QA confirmed the tenth Strum pattern, illuminated muted lane starts,
 and fifteen attacks for three strokes over the five sounding C-chord parts,
 with fourteen active voices maximum. The local preview server was stopped.
+
+## Approved installation
+
+On 26 October 2026 the user explicitly approved flashing this exact candidate.
+The staged package hash was verified, and the running FM-1 answered FM-1_982.
+The reference MIDI installer completed through the ordinary update path, exited
+0 and reported a restarted running FM-1_982. A separate post-install identity
+request also answered normally. Local record:
+`build/device-prep/strum-flourish/installation-result.json`.
+
+The user's browser review is positive. Physical audio, muted lane illumination,
+loop level and sustained flourish timing await hands-on feedback. No further
+firmware switch, public release or Hub submission was performed.
