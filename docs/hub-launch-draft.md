@@ -33,14 +33,15 @@ No mail has been sent, tag pushed, firmware release published or submission made
    all sixteen sounds, three new chord-pulse patterns, muted parts, sustained
    fourteen-voice load and low-to-high master sweep. Record the exact hash.
    Check the increased output level and Steel tails by ear; local tests cannot.
-2. Record V15 -> final candidate and another firmware -> final candidate.
-   Existing Felucca entry and earlier GuitChordi updates are useful historical
-   evidence, but do not qualify a changed final binary from V15.
+2. V15 -> exact final candidate completed on 26 October: independent starting
+   identity FM-1_015, ordinary updater exit 0, reboot and independent identity
+   FM-1_982. Post-return user sound/control confirmation is pending. Entry from
+   Felucca is also proven for this exact binary. See the hardware test log.
 3. Completed on 26 October: exact final candidate SHA-256
    `330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`
    -> official Felucca 1.6.1 -> identical candidate. Both installers exited 0,
    independent identities matched (916 / 982), and the user confirmed operation
-   on both sides. V15 entry remains open. Do not induce physical power failures.
+   on both sides. V15 entry is recorded above. Do not induce physical power failures.
 4. Confirm USB MIDI identity uniqueness; retain protected-sector/update-loader
    checks and the private device backup. Document RAM-only SAVE and inability
    to read other firmwares' projects/samples in the release notes.

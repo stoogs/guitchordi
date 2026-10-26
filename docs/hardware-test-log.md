@@ -86,3 +86,36 @@ Before a stock test, choose and verify either upstream's Felucca backup/stock
 return path or a strictly allowlisted equivalent. Do not bypass the guard
 blindly. A V15 installation and return still need separate user approval.
 No V15 write, rescue restoration, release or Hub submission was performed.
+
+## 26 October 2026 — stock-test staging reached Felucca
+
+Under explicit user approval to proceed through Felucca to V15 and stop, the
+verified Felucca 1.6.1 package was installed from GuitChordi. Installer log
+reports completed write and reboot to FM-1_916; a separate identity request
+confirmed running FM-1_916 after the interrupted browser-control attempt.
+The user also confirmed Felucca is running. Stock V15 package size/hash
+were reverified. Native Brave UI access timed out; no stock installation or
+new musical archive export was performed by the agent. The original verified
+private full-flash backup remains available. V15 entry remains untested.
+Local progress record: `build/device-prep/hub-roundtrip/v15-progress.json`.
+
+## 26 October 2026 — stock V15 entry to final GuitChordi candidate
+
+The user reports the official backup/return-to-V15 procedure worked in Chrome
+(Firefox did not), and stock firmware worked great. The agent did not observe
+the browser backup download or its contents; that export remains user-reported.
+A separate MIDI identity request independently confirmed running FM-1_015 on
+the newly enumerated FM-1 endpoint before any return write.
+
+The user requested continuing. The unchanged 609684-byte candidate SHA-256
+`330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`
+and Felucca loader marker were reverified. Ordinary MIDI installation from
+V15 completed with exit 0 and reported reboot to FM-1_982. A separate identity
+request confirmed running FM-1_982 (macOS endpoint returned to X0X FM-1).
+No force override or rescue restoration was used.
+
+V15 -> exact final candidate now has physical transport/reboot/identity evidence.
+Post-return user sound/control confirmation is pending. This does not prove
+worst-case processor timing, stack margin or physical recovery restoration.
+Installer log: `build/device-prep/hub-roundtrip/v15-to-guitchordi.log`.
+No firmware release or Hub submission performed.
