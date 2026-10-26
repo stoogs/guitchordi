@@ -78,3 +78,20 @@ renamed copy of the tested package, complete source archive, full notices, relea
 notes, qualification metadata and checksums. Preparation does not publish a tag,
 create a GitHub release or send a message. The source archive is bound to the
 recorded commit; only documentation changed since the tested application commit.
+
+## Published beta checkpoint — 26 October 2026
+
+The user requested submission, then chose to send the prepared email themselves.
+The exact source commit `09a4f170d76e7e6b1fad6cb3f3609553eabaf498` is now tagged
+`v0.1.0-beta.1`. The GitHub prerelease is published:
+https://github.com/stoogs/guitchordi/releases/tag/v0.1.0-beta.1
+
+It contains the unchanged tested firmware, matching source archive, review ZIP
+with licenses/evidence, qualification snapshot and SHA256SUMS. All five public
+asset sizes and GitHub digests were verified against the prepared files; a
+download of the public firmware independently matched the tested package hash.
+The preparation-state fields in the archived source/qualification snapshot
+describe the prepublication state; this checkpoint records publication. No
+firmware rebuild or device write occurred. No Hub email has been sent by the
+agent, and Hub acceptance/listing is not established. The physical interruption
+test was explicitly declined by the user and remains clearly disclosed.
