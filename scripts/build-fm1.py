@@ -115,7 +115,7 @@ def main():
     report['emulator_diagnostic']=a.emulator_diagnostic
     report['lcd_baud']=4 if a.emulator_diagnostic else 0
     report['audio_output']={'format':'signed 24-bit value in int32 word; no extra left shift',
-                            'bringup_digital_peak_limit':524287,'startup_master':0,
+                            'bringup_digital_peak_limit':629144,'startup_master':0,
                             'adc_timeout_mutes':True,'hardware_audio_verified':False}
     if a.package:
         sdk=Path(os.environ.get('AC79_SDK',ROOT/'build/ac79-sdk'))

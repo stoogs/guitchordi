@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('build/simulator.wasm')),{}).exports;e._initialize();
 function render(frames,held=false){while(frames>0){const n=Math.min(frames,128);if(held)e.fw_button(10,1);e.fw_render(n);frames-=n;}}
 e.fw_boot();e.fw_button(10,1);render(5*44100-1,true);assert.equal(e.fw_easter_egg(),0);assert.equal(e.fw_attacks(),0);
-render(1,true);assert.equal(e.fw_easter_egg(),1);render(6*44100,true);assert.ok(e.fw_attacks()>90);
+render(1,true);assert.equal(e.fw_easter_egg(),1);render(6*44100,true);assert.equal(e.fw_attacks(),78,'173 eighth-note pulses/min with six strokes per bar');
 e.fw_button(10,0);e.fw_button(10,1);assert.equal(e.fw_easter_egg(),0);assert.equal(e.gm_active(),0);render(6*44100,true);assert.equal(e.fw_easter_egg(),0);
 e.fw_button(10,0);e.fw_button(10,1);render(5*44100,true);assert.equal(e.fw_easter_egg(),1);e.fw_button(10,0);
 e.fw_master(0);render(128);assert.ok(new Float32Array(e.memory.buffer,e.fw_render(128),128).every(x=>x===0));

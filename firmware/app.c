@@ -124,21 +124,26 @@ static void rhythm_tick(void) {
     rhythm_step++;
 }
 static void rhythm_start(void) { rhythm_cancel();auto_running=1;rhythm_step=step_fraction=0;rhythm_tick(); }
-/* Hidden acoustic chord-loop nod: common B / F# / E / B harmony, not a
+/* Hidden acoustic chord-loop nod: common B / F#6 / Emaj7 / B harmony, not a
  * transcription of the song's melody or a recording. Keep normal settings. */
 static const uint8_t egg_chords[4][6]={
-    {47,54,59,63,66,71},{42,49,54,58,61,66},
-    {40,47,52,56,59,64},{47,54,59,63,66,71}
+    {47,54,59,63,66,63},{42,49,54,58,61,63},
+    {40,47,52,56,59,63},{47,54,59,63,66,63}
 };
-static const char *const egg_names[]={"B","F#","E","B"};
+static const char *const egg_names[]={"B","F#6","Emaj7","B"};
 static void egg_tick(void) {
     uint32_t chord=(egg_step/8u)%4u;
-    next_tick=sample_clock+GM_RATE*60u/(88u*2u);
+    /* 173 eighth-note pulses/minute = 86.5 quarter-note BPM (half-time feel).
+     * An accented D-DU-UDU strum and common high D# keep this a chord-loop nod. */
+    next_tick=sample_clock+GM_RATE*60u/173u;
+    static const int8_t strokes[8]={1,0,1,-1,0,-1,1,-1};
+    int stroke=strokes[egg_step%8u];
+    if(!stroke) { egg_step++;return; }
     queued=6;
     for(int i=0;i<6;i++) {
-        int part=(egg_step&1u)?5-i:i;
+        int part=stroke<0?5-i:i;
         auto_notes[i]=(auto_note){sample_clock+(uint32_t)i*GM_RATE/200u,
-            part,egg_chords[chord][part],4,50,0,.42f};
+            part,egg_chords[chord][part],3,50,0,(egg_step%8u==0)?.48f:.36f};
     }
     egg_step++;
 }
@@ -257,8 +262,8 @@ int fw_key_pitch(int key) {
 void fw_panic(void) { boot_visible=0; auto_blocked=0;for(int i=0;i<11;i++)auto_blocked|=keys&(1u<<black[i]);auto_running=queued=egg_active=0;play_fired=1; gm_reset(); memset(room_line, 0, sizeof room_line); room_cursor = 0; keys = buttons = 0; lock_fired = edit_fired = 0; reset_choice = -1; }
 static void defaults(void) {
     fw_panic(); memcpy(slots, mode_slots[16], sizeof slots); memset(slot_shapes,0,sizeof slot_shapes);
-    selected = 0; locked = page = editing = transpose = 0;tone=4;mode=16;
-    auto_blocked=0;rhythm_velocity=80;play_mode=tempo_edit=gate_tails=tuning=0;humanity=2;bpm=90;sample_clock=next_tick=step_fraction=rhythm_step=0;rhythm_rng=0x8769u;
+    selected = 0; locked = page = editing = transpose = 0;tone=3;mode=16;
+    auto_blocked=0;rhythm_velocity=80;play_mode=1;tempo_edit=gate_tails=tuning=0;humanity=2;bpm=90;sample_clock=next_tick=step_fraction=rhythm_step=0;rhythm_rng=0x8769u;
     int defaults[2][4]={{0,9,4,10},{0,9,4,0}};memcpy(rhythm,defaults,sizeof rhythm);
     volume = 60; velocity = 50; room = 12; last_key = last_pitch = -1;
     last_control = -1; control_at = clock_ms;

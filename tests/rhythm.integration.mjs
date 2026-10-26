@@ -2,9 +2,13 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('build/simulator.wasm')),{}).exports;e._initialize();
 function advance(ms){let n=Math.round(ms*44.1);while(n){const count=Math.min(128,n);const a=new Float32Array(e.memory.buffer,e.fw_render(count),count);assert.ok(a.every(x=>Number.isFinite(x)&&Math.abs(x)<=.980001));assert.ok(e.gm_active()<=14);n-=count;}}
-e.fw_boot();assert.equal(e.fw_bpm(),90,'factory tempo');assert.equal(e.fw_tone(),4);assert.equal(e.fw_mode(),16);assert.equal(e.fw_selected(),0);assert.deepEqual([0,1,2,3].map(i=>e.fw_rhythm_param(i)),[0,9,4,10]);
-function boot(mode){e.fw_boot();e.fw_set_mode(0);e.fw_set_tone(0);e.fw_keys(1<<3);e.fw_keys(0);e.fw_encoder(0,30);for(let i=0;i<mode;i++)button(8);}
+e.fw_boot();assert.equal(e.fw_bpm(),90,'factory tempo');assert.equal(e.fw_tone(),3);assert.equal(e.fw_play_mode(),1);assert.equal(e.fw_running(),0);assert.equal(e.fw_mode(),16);assert.equal(e.fw_selected(),0);assert.deepEqual([0,1,2,3].map(i=>e.fw_rhythm_param(i)),[0,9,4,10]);
+function boot(mode){e.fw_boot();button(8);button(8);e.fw_set_mode(0);e.fw_set_tone(0);e.fw_keys(1<<3);e.fw_keys(0);e.fw_encoder(0,30);for(let i=0;i<mode;i++)button(8);}
 function button(n){e.fw_button(n,1);e.fw_button(n,0);}
+// First use invites one complete stroke without starting audio at boot.
+e.fw_keys(1<<1);e.fw_keys(0);advance(60);
+assert.equal(e.fw_attacks(),6,'factory Strum chord tap completes six notes');
+assert.ok(e.gm_active()>0);assert.equal(e.fw_running(),0);
 const chord=1<<3;
 boot(0);const stable=e.fw_render(128);e.fw_keys(chord);advance(1000);assert.equal(e.fw_attacks(),0);
 boot(1);e.fw_keys(chord);assert.equal(e.fw_attacks(),1);advance(80);assert.equal(e.fw_attacks(),6);assert.equal(e.fw_render(128),stable,'one stable output buffer across modes');

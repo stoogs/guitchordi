@@ -25,7 +25,7 @@ for(let tone=0;tone<16;tone++){
 assert.equal(hashes.size,16,'all patches generate distinct audio');assert.equal(sampleIndex*4,native.length);
 let contacts=0;
 for(let tone=0;tone<16;tone++)for(let mode=0;mode<50;mode++){
-  e.fw_boot();e.fw_set_mode(mode);e.fw_set_tone(tone);const patch=patches[tone];
+  e.fw_boot();e.fw_button(8,1);e.fw_button(8,0);e.fw_button(8,1);e.fw_button(8,0);e.fw_set_mode(mode);e.fw_set_tone(tone);const patch=patches[tone];
   for(let slot=0;slot<11;slot++){
     e.fw_keys(1<<black[slot]);e.fw_keys(0);const notes=bank.voicings[styles[mode].slots[slot]];
     for(let key=0;key<16;key++){

@@ -12,22 +12,24 @@ static int32_t codec_value(int32_t word) {
     return bits&0x800000u?(int32_t)(bits-0x1000000u):(int32_t)bits;
 }
 int main(void) {
+    /* Independent approved ceiling: exactly 1.2 times the quiet beta, rounded. */
+    assert(GM_DAC_LIMIT==629144 && GM_DAC_LIMIT<8388607/12);
     int32_t previous=-GM_DAC_LIMIT;
     for(int i=-10000;i<=10000;i++) {
         float x=i/10000.0f;
         int32_t word=gm_dac_sample(x,100), decoded=codec_value(word);
         assert(word==decoded && decoded>=previous);
-        assert(decoded>=-524287 && decoded<=524287);
+        assert(decoded>=-629144 && decoded<=629144);
         assert(gm_dac_sample(x,0)==0);
         previous=decoded;
     }
-    assert(codec_value(gm_dac_sample(1,100))==524287);
-    assert(codec_value(gm_dac_sample(-1,100))==-524287);
+    assert(codec_value(gm_dac_sample(1,100))==629144);
+    assert(codec_value(gm_dac_sample(-1,100))==-629144);
     assert(gm_dac_sample(NAN,100)==0 && gm_dac_sample(INFINITY,100)==0);
     assert(gm_dac_sample(-INFINITY,100)==0 && gm_dac_sample(1.1f,100)==0);
     /* A 5% normalized signal stays 5% in the receiver, without serial-bit wrap. */
     int32_t quiet=codec_value(gm_dac_sample(.05f,5));
-    assert(quiet>=26213 && quiet<=26215);
+    assert(quiet>=31456 && quiet<=31458);
     assert(codec_value(gm_dac_sample(-.05f,5))==-quiet);
     int32_t smooth=0;
     for(int raw=0;raw<=1023;raw++) {

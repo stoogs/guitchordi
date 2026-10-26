@@ -8,7 +8,7 @@ rows=[
  ('wire','Wire','Original',23000,46000,43000,16000,0,1800,24,.28,0,0,6,'Bright original plucked string.'),
  ('glow','Glow','Original',34000,37000,49000,16000,0,2400,24,.28,0,0,6,'Synthetic original string colour.'),
  ('nylon','Nylon Acoustic','Guitar',13500,34500,43000,16500,0,2450,32,.34,0,0,6,'Warm fingerpicked attack, clear upper strings and a fuller ringing body.'),
- ('steel','Steel Acoustic','Guitar',20000,53000,46000,12000,0,2300,24,.26,0,0,6,'Brighter pick and ringing steel-like string.'),
+ ('steel','Steel Acoustic','Guitar',16500,45500,38000,16000,0,2300,24,.26,0,0,6,'Bright picked strings with a warmer, naturally damped tail.'),
  ('jumbo','Jumbo Acoustic','Guitar',11000,38500,49000,19500,0,2750,32,.29,0,0,6,'Rounder low end and an open ringing tail.'),
  ('palm','Palm Muted','Guitar',16000,39500,18000,12500,0,620,24,.34,0,0,6,'Short, damped attacks for tight rhythmic playing.'),
  ('clean','Clean Electric','Guitar',18000,46500,45500,20000,0,2450,28,.27,0,0,6,'Clean electric-like picked string.'),

@@ -4,9 +4,9 @@
 
 /* The configured ALNK/codec path consumes signed 24-bit VALUES in int32 words,
  * as Felucca audio.c does with Q15 * 128. Do not shift them left another 8 bits.
- * First-hardware bring-up ceiling: 1/16 full scale (~-24 dBFS). This is a digital
+ * Quiet-beta ceiling plus 20% amplitude: ~-22.5 dBFS. This is a digital
  * bound, not a guarantee of acoustic loudness on a particular speaker. */
-#define GM_DAC_LIMIT 524287
+#define GM_DAC_LIMIT 629144
 static int32_t gm_dac_sample(float sample, unsigned master) {
     /* Also reject NaN/infinity before float-to-integer conversion. The separate
      * master gate enforces zero even when the application is in a reset dialog. */

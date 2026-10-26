@@ -18,7 +18,7 @@ int main(int argc,char **argv) {
     assert(argc==2);fw_boot();fw_button(10,1);
     render(5*GM_RATE-1,1);assert(!fw_easter_egg());assert(fw_attacks()==0);
     render(1,1);assert(fw_easter_egg());
-    render(6*GM_RATE,1);assert(fw_easter_egg() && fw_attacks()>90);
+    render(6*GM_RATE,1);assert(fw_easter_egg() && fw_attacks()==78);
     fw_button(10,0);fw_button(10,1);assert(!fw_easter_egg() && !gm_active());
     render(6*GM_RATE,1);assert(!fw_easter_egg() && !gm_active());
     fw_button(10,0);fw_button(10,1);render(5*GM_RATE,1);assert(fw_easter_egg());

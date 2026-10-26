@@ -1,14 +1,14 @@
 {
   "status": "compiled-unverified-on-device",
-  "app_bytes": 231116,
-  "app_sha256": "8661e9ca61c988e3b2cc0eff549709c0ef5ffafb0f4fdd6af928795310791aab",
+  "app_bytes": 231148,
+  "app_sha256": "f66e63b8697660fb3760fd5e4df18d306f97a375846f4f399e808525dabb7866",
   "ram_data_bss_bytes": 60384,
   "pool_bytes": 115200,
   "loader_bytes": 6528,
   "package": {
     "path": "build/fm1/guitchordi-experimental.fwsc",
     "bytes": 609684,
-    "sha256": "d3b0f28b3a0559ec43329c0f2571754edf38cb1c61603d2c53d8421ed9966986"
+    "sha256": "ecc909f20576ec0e10440f5eaba20d2f4b3fb00f3d43b1d280799543ae491a59"
   },
   "toolchain": "20260730.1",
   "docker_image": "debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8",
@@ -29,7 +29,7 @@
   "lcd_baud": 0,
   "audio_output": {
     "format": "signed 24-bit value in int32 word; no extra left shift",
-    "bringup_digital_peak_limit": 524287,
+    "bringup_digital_peak_limit": 629144,
     "startup_master": 0,
     "adc_timeout_mutes": true,
     "hardware_audio_verified": false

@@ -13,7 +13,7 @@ assert.equal(e.fw_attacks(),0);for(let i=0;i<720;i++)e.fw_render(128);assert.equ
 for(const input of [()=>e.fw_keys(1),()=>e.fw_button(1,1),()=>e.fw_encoder(0,1)]){e.fw_boot();input();assert.equal(e.fw_boot_screen(),0,'first physical input skips splash');}
 e.fw_boot();e.fw_keys(1);assert.equal(e.fw_attacks(),1,'first playing contact still sounds immediately');
 fixtureBoot();
-function fixtureBoot(){e.fw_boot();e.fw_set_mode(0);e.fw_set_tone(0);e.fw_keys(1<<3);e.fw_keys(0);}
+function fixtureBoot(){e.fw_boot();for(let i=0;i<2;i++){e.fw_button(8,1);e.fw_button(8,0);}e.fw_set_mode(0);e.fw_set_tone(0);e.fw_keys(1<<3);e.fw_keys(0);}
 const native = fs.readFileSync('build/simulator-native.f32'); let peak = 0, diff = 0;
 for (let b = 0; b < 1200; b++) {
   if (b===20) e.fw_keys(1); if(b===30) e.fw_keys(1<<4); if(b===40)e.fw_keys(0);

@@ -59,8 +59,8 @@ if a.check_audio_output:
  audio_check=dict(words=len(words),peak=max(map(abs,decoded),default=0),
    signed_24_bit=all(a==b for a,b in zip(words,decoded)),
    stereo_matches=all(words[i]==words[i+1] for i in range(0,len(words),2)),
-   digital_ceiling=524287)
- passed=passed and bool(words) and audio_check['signed_24_bit'] and audio_check['stereo_matches'] and 0<audio_check['peak']<=524287
+   digital_ceiling=629144)
+ passed=passed and bool(words) and audio_check['signed_24_bit'] and audio_check['stereo_matches'] and 0<audio_check['peak']<=629144
 report=dict(passed=passed,scope="recovery-request-only" if a.recovery else "boot-idle-only" if a.idle else "boot-and-note",diagnostic=a.diagnostic,physical_tested=False,
  package_sha256=hashlib.sha256(package.read_bytes()).hexdigest(),
  emulator_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),

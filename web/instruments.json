@@ -105,10 +105,10 @@
       "id": "steel",
       "name": "Steel Acoustic",
       "family": "Guitar",
-      "structure": 20000,
-      "brightness": 53000,
-      "damping": 46000,
-      "position": 12000,
+      "structure": 16500,
+      "brightness": 45500,
+      "damping": 38000,
+      "position": 16000,
       "bow": 0,
       "durationMs": 2300,
       "attackSamples": 24,
@@ -124,7 +124,7 @@
         4,
         5
       ],
-      "description": "Brighter pick and ringing steel-like string."
+      "description": "Bright picked strings with a warmer, naturally damped tail."
     },
     {
       "id": "jumbo",

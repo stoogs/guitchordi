@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const e=new WebAssembly.Instance(await WebAssembly.compile(fs.readFileSync('build/simulator.wasm')),{}).exports;e._initialize();
 const blacks=[1,3,5,8,10,13,15,17,20,22,25];
 const choose=slot=>{e.fw_keys(0);e.fw_keys(1<<blacks[slot]);e.fw_keys(0);};
-e.fw_boot();assert.equal(e.fw_suggestion(-1),-1);assert.equal(e.fw_suggestion(11),-1);assert.equal(e.fw_key_brightness(27),0);
+e.fw_boot();e.fw_button(8,1);e.fw_button(8,0);e.fw_button(8,1);e.fw_button(8,0);assert.equal(e.fw_suggestion(-1),-1);assert.equal(e.fw_suggestion(11),-1);assert.equal(e.fw_key_brightness(27),0);
 assert.equal(e.fw_set_mode(2),1);choose(0);
 assert.equal(e.fw_suggestion(0),0);assert.equal(e.fw_suggestion(3),3,'Fmaj9 → C13 smooth');assert.equal(e.fw_suggestion(7),1,'Fmaj9 → D7b9 is a tension choice');assert.equal(e.fw_suggestion(8),2);
 assert.deepEqual([3,8,7].map(i=>e.fw_key_brightness(blacks[i])),[192,80,20]);
@@ -14,7 +14,7 @@ const before=Array.from({length:11},(_,i)=>e.fw_suggestion(i));e.fw_encoder(4,12
 choose(0);const unedited=Array.from({length:11},(_,i)=>e.fw_suggestion(i));e.fw_button(4,1);e.fw_button(4,0);e.fw_encoder(2,100);const edited=Array.from({length:11},(_,i)=>e.fw_suggestion(i));assert.notDeepEqual(edited,unedited);e.fw_button(1,1);e.fw_button(1,0);
 let comparisons=0;const counts=[0,0,0,0];
 for(let mode=0;mode<50;mode++){
- e.fw_boot();e.fw_set_mode(mode);
+ e.fw_boot();e.fw_button(8,1);e.fw_button(8,0);e.fw_button(8,1);e.fw_button(8,0);e.fw_set_mode(mode);
  for(let from=0;from<11;from++){
   choose(from);
   for(let to=0;to<11;to++){

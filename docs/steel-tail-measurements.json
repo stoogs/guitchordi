@@ -1,0 +1,165 @@
+{
+  "scope": "Native DSP, isolated 80% attacks at character 50; not physical listening proof",
+  "rate": 44100,
+  "tail_window_seconds": [
+    1,
+    2
+  ],
+  "baseline_commit": "efe785d",
+  "notes": [
+    {
+      "midi": 44,
+      "before": {
+        "rms": 0.005724465474486351,
+        "dominant_hz": 104.0,
+        "energy_above_2khz_fraction": 6.502668317794517e-10
+      },
+      "after": {
+        "rms": 0.0039245858788490295,
+        "dominant_hz": 105.0,
+        "energy_above_2khz_fraction": 1.1760980653983504e-09
+      },
+      "tail_energy_change_db": -3.278822070320043
+    },
+    {
+      "midi": 47,
+      "before": {
+        "rms": 0.007678043097257614,
+        "dominant_hz": 247.0,
+        "energy_above_2khz_fraction": 4.4580955953442903e-10
+      },
+      "after": {
+        "rms": 0.004211424849927425,
+        "dominant_hz": 125.0,
+        "energy_above_2khz_fraction": 1.0059095329323436e-09
+      },
+      "tail_energy_change_db": -5.216429802101253
+    },
+    {
+      "midi": 54,
+      "before": {
+        "rms": 0.006396600045263767,
+        "dominant_hz": 369.0,
+        "energy_above_2khz_fraction": 1.022706983316912e-09
+      },
+      "after": {
+        "rms": 0.0038801226764917374,
+        "dominant_hz": 187.0,
+        "energy_above_2khz_fraction": 1.5523209116257546e-09
+      },
+      "tail_energy_change_db": -4.34207480115914
+    },
+    {
+      "midi": 56,
+      "before": {
+        "rms": 0.0053515308536589146,
+        "dominant_hz": 622.0,
+        "energy_above_2khz_fraction": 2.0930042671882087e-09
+      },
+      "after": {
+        "rms": 0.004105776082724333,
+        "dominant_hz": 210.0,
+        "energy_above_2khz_fraction": 2.823994918182079e-09
+      },
+      "tail_energy_change_db": -2.3016554628829597
+    },
+    {
+      "midi": 59,
+      "before": {
+        "rms": 0.006760298274457455,
+        "dominant_hz": 247.0,
+        "energy_above_2khz_fraction": 8.964878620145854e-09
+      },
+      "after": {
+        "rms": 0.002886916743591428,
+        "dominant_hz": 249.0,
+        "energy_above_2khz_fraction": 3.900549039025173e-09
+      },
+      "tail_energy_change_db": -7.390631974712085
+    },
+    {
+      "midi": 61,
+      "before": {
+        "rms": 0.008059903979301453,
+        "dominant_hz": 830.0,
+        "energy_above_2khz_fraction": 4.4560811404394206e-06
+      },
+      "after": {
+        "rms": 0.0022797698620706797,
+        "dominant_hz": 280.0,
+        "energy_above_2khz_fraction": 6.5236888753359e-09
+      },
+      "tail_energy_change_db": -10.968777196277163
+    },
+    {
+      "midi": 63,
+      "before": {
+        "rms": 0.011658717878162861,
+        "dominant_hz": 938.0,
+        "energy_above_2khz_fraction": 7.234913151153857e-05
+      },
+      "after": {
+        "rms": 0.0022498557809740305,
+        "dominant_hz": 314.0,
+        "energy_above_2khz_fraction": 6.824817018984095e-09
+      },
+      "tail_energy_change_db": -14.289922262363561
+    },
+    {
+      "midi": 64,
+      "before": {
+        "rms": 0.00779273035004735,
+        "dominant_hz": 332.0,
+        "energy_above_2khz_fraction": 0.0007383689917111935
+      },
+      "after": {
+        "rms": 0.003405757946893573,
+        "dominant_hz": 333.0,
+        "energy_above_2khz_fraction": 6.017657997330285e-09
+      },
+      "tail_energy_change_db": -7.1895174009856655
+    },
+    {
+      "midi": 66,
+      "before": {
+        "rms": 0.012266905046999454,
+        "dominant_hz": 744.0,
+        "energy_above_2khz_fraction": 0.0016227756233415866
+      },
+      "after": {
+        "rms": 0.0021796622313559055,
+        "dominant_hz": 747.0,
+        "energy_above_2khz_fraction": 1.0260858026144277e-08
+      },
+      "tail_energy_change_db": -15.00691609359018
+    },
+    {
+      "midi": 68,
+      "before": {
+        "rms": 0.017079101875424385,
+        "dominant_hz": 836.0,
+        "energy_above_2khz_fraction": 0.05669662896123581
+      },
+      "after": {
+        "rms": 0.0034072273410856724,
+        "dominant_hz": 419.0,
+        "energy_above_2khz_fraction": 5.151367892055845e-09
+      },
+      "tail_energy_change_db": -14.001278340409876
+    },
+    {
+      "midi": 71,
+      "before": {
+        "rms": 0.012610437348484993,
+        "dominant_hz": 1492.0,
+        "energy_above_2khz_fraction": 0.16344682440699448
+      },
+      "after": {
+        "rms": 0.0032115227077156305,
+        "dominant_hz": 499.0,
+        "energy_above_2khz_fraction": 1.746481523943079e-08
+      },
+      "tail_energy_change_db": -11.880383033548028
+    }
+  ]
+}
