@@ -47,3 +47,16 @@ existing private backup hash were verified before starting.
 - Felucca sound/control confirmation: pending user feedback. Return leg approved
   but not yet performed. This does not establish V15 entry or complete the round trip.
 - Local record: `build/device-prep/hub-roundtrip/results.json`.
+
+## 26 October 2026 — return from Felucca to GuitChordi
+
+The user confirmed Felucca was running fine. Under the existing round-trip
+approval, the exact GuitChordi package
+`330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`
+was reverified and installed from running FM-1_916. Ordinary MIDI installation
+completed with exit 0 and rebooted into FM-1_982. A separate identity request
+confirmed running FM-1_982 on the cached X0X FM-1 endpoint.
+
+Both update directions now have successful transport/reboot/identity evidence;
+Felucca has user-confirmed operation. Post-return GuitChordi audio/control check
+is pending. V15 entry remains untested. No release or Hub submission performed.
