@@ -46,7 +46,9 @@ Stoogs
 
 ---
 
-Sending status: **not sent**. The user chose to send this message themselves.
+Sending status: **user-confirmed sent on 26 October 2026**. The user sent the
+message themselves and reported “ok sent”; the agent did not send it or
+independently inspect the sent message. Hub acceptance/listing remains pending.
 The beta was published with explicit user authorization. All five asset sizes
 and GitHub SHA-256 digests match the local prepared assets, and a download of
 the public firmware matched the exact tested package. This is a request for

@@ -95,3 +95,10 @@ describe the prepublication state; this checkpoint records publication. No
 firmware rebuild or device write occurred. No Hub email has been sent by the
 agent, and Hub acceptance/listing is not established. The physical interruption
 test was explicitly declined by the user and remains clearly disclosed.
+
+## Submission sent — 26 October 2026
+
+The user reported “ok sent” after receiving the final submission message and
+public beta release link. Record this as user-confirmed submission, not an
+agent-sent or independently inspected email. Hub review, acceptance and listing
+remain pending. No additional device writes or firmware changes were made.
