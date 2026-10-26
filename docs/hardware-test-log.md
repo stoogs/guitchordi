@@ -60,3 +60,29 @@ confirmed running FM-1_982 on the cached X0X FM-1 endpoint.
 Both update directions now have successful transport/reboot/identity evidence;
 Felucca has user-confirmed operation. Post-return GuitChordi audio/control check
 is pending. V15 entry remains untested. No release or Hub submission performed.
+
+The user subsequently confirmed post-return GuitChordi works fine. The final
+GuitChordi -> Felucca 1.6.1 -> identical GuitChordi round trip is complete with
+installer/reboot/identity evidence and user-confirmed operation on both sides.
+V15 entry and sustained worst-case deadline measurements remain open.
+
+## 26 October 2026 — V15 route review, no device write
+
+The pinned stock V15 package was rechecked: 699956 bytes, SHA-256
+`db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a`.
+Felucca upstream at commit `a53ecf428c29c780108fd70a31b71a32a6b5c313`
+uses the identical size/hash allowlist in `web/fm1pkg.js`. Its
+`web/index_pkg.html` stock return path validates that package, exports a
+complete Felucca archive, then uses the ordinary two-stage MIDI updater
+(`web/fm1ota.js`) and verifies the resulting identity. The running-firmware
+path refuses firmware without its archive-export capability. Our existing
+private full-flash backup is a different backup format and does not establish
+that browser capability in GuitChordi.
+
+The retained Python installer's default package guard rejects stock because
+it lacks the Felucca loader marker. Its generic force flag has not been used.
+No claim is made that this guard is proof of an incompatible wire protocol.
+Before a stock test, choose and verify either upstream's Felucca backup/stock
+return path or a strictly allowlisted equivalent. Do not bypass the guard
+blindly. A V15 installation and return still need separate user approval.
+No V15 write, rescue restoration, release or Hub submission was performed.

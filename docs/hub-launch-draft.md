@@ -36,8 +36,11 @@ No mail has been sent, tag pushed, firmware release published or submission made
 2. Record V15 -> final candidate and another firmware -> final candidate.
    Existing Felucca entry and earlier GuitChordi updates are useful historical
    evidence, but do not qualify a changed final binary from V15.
-3. Leave the final candidate for known-good other firmware and return. Record
-   boot/audio/USB identity each way. Do not induce physical power failures.
+3. Completed on 26 October: exact final candidate SHA-256
+   `330396f043093bcdda65aacbd0098dd1fc1f253a17d5707db19ff5d971e05217`
+   -> official Felucca 1.6.1 -> identical candidate. Both installers exited 0,
+   independent identities matched (916 / 982), and the user confirmed operation
+   on both sides. V15 entry remains open. Do not induce physical power failures.
 4. Confirm USB MIDI identity uniqueness; retain protected-sector/update-loader
    checks and the private device backup. Document RAM-only SAVE and inability
    to read other firmwares' projects/samples in the release notes.
