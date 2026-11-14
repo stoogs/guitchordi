@@ -125,3 +125,5 @@ The current `FM-1_982` package identity is provisional and not reserved with the
 USB identity, real-device entry from V15/Felucca and exit to Felucca are tested.
 Physical interrupted-update resume and full backup restoration remain open. The unchanged processor candidate passes boot/note and 343 virtual actions in a
 locally patched research emulator; its added semantics are not silicon-validated. See [qualification evidence](docs/local-qualification.md). No Hub submission or release tag has been made.
+
+You can also try Guitchordi in the browser, no flashing needed, in the free community [FM-1 Emulator](https://fm1-emulator.atst.tools/).
